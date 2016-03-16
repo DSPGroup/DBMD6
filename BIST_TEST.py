@@ -27,22 +27,3 @@ time.sleep(1)
 write_apb_reg ("0300004c", "0000001")
 time.sleep(1)
 read_apb_reg ("0300004c")
-
-read_apb_reg ("0300004c")
-time.sleep(1)
-write_apb_reg ("0300004c", "0000001")
-time.sleep(1)
-read_apb_reg ("0300004c")
-
-read_apb_reg ("0300004c")
-time.sleep(1)
-write_apb_reg ("0300004c", "0000001")
-time.sleep(1)
-read_apb_reg ("0300004c")
-
-read_apb_reg ("0300004c")
-time.sleep(1)
-write_apb_reg ("0300004c", "0000001")
-time.sleep(1)
-read_apb_reg ("0300004c")
-
