@@ -1,8 +1,8 @@
 ##########################
 #Script identification :: init Script
 ##########################
-#Author : Eran Simoni
-#Start Date : 8-3-2016
+#Author : HEN LANGE
+#Start Date : 13-3-2016
 #Script change By : xxxx
 
 #######################################################################################
@@ -18,6 +18,7 @@ import select
 import shlex
 import datetime
 import shutil
+import binascii
 
-execfile("G:\Chip_Validation\Python\Zvi\infrastructure\Init_Configuration.py")
-execfile("G:\Chip_Validation\Python\Zvi\infrastructure\Function.py")
+execfile("G:\Chip_Validation\Python\Hen\infrastructure\Init_Configuration.py")
+execfile("G:\Chip_Validation\Python\Hen\infrastructure\Function.py")

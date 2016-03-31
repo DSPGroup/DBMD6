@@ -1,8 +1,8 @@
 ##########################
 #Script identification 
 ##########################
-#Author : Eran Simoni
-#Start Date : 8-3-2016
+#Author : HEN LANGE
+#Start Date : 13-3-2016
 #Script change By : xxxx
 
 #######################################################################################
@@ -11,7 +11,7 @@
 #########################################
 #####     Uart Basic Configuration
 #########################################
-COM = 'COM4'
+COM = 'COM9'
 BAUD_RATE = 3000000
 BYTE_SIZE = 8
 PARIT = 'N'
@@ -22,7 +22,7 @@ TIME_SERIAL = 1
 #########################################
 #####     Create Folder
 #########################################
-Path_Folder = r'C:\Users\valab\Documents\Validation\Python'
+Path_Folder = r'G:\Chip_Validation\Python\Hen'
 Folder_Name = "Test Result"
 Folder_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 Dir_Name = os.path.join(Path_Folder , Folder_Name , Folder_Date)
