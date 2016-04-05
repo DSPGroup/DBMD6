@@ -335,15 +335,13 @@ def MEM_BIST(test_name,write_val,status_reg,result_val):
         ROM_sig="0110100000111101000001101100000010111100011011100000011111111111"
         ROM_sig_LSB=ROM_sig[0:32]
         ROM_sig_MSB=ROM_sig[32:64]
-        ROM_sig_LSB_addr="030000d8"
-        ROM_sig_MSB_addr="030000dc"
-        read_apb_reg(ROM_sig_LSB_addr)
+        read_apb_reg("030000d8") ##ROM LSB address
         ROM_sig_LSB_read=apb_reg
         reg=int(apb_reg,16)
         ROM_sig_LSB_read=bin(reg).zfill(32)
         print "LSB register -bin"
         print ROM_sig_LSB_read[2:33]
-        read_apb_reg(ROM_sig_MSB_addr)
+        read_apb_reg("030000dc") ##ROM MSB address
         reg=int(apb_reg,16)
         ROM_sig_MSB_read=bin(reg).zfill(32)
         print "MSB register -bin"
