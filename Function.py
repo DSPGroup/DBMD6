@@ -301,7 +301,7 @@ def set_bit(addr,bits_set_hex):
 
 # MEM_BIST = function run the BIST test 
 #################################
-def MEM_BIST(test_name,write_val,status_reg,result_val):
+def MEM_BIST(test_name,write_val,status_reg,result_val,PLL,LDO):
    
     read_apb_reg("0300004c")
     write_apb_reg("0300004c","88025614")
@@ -310,12 +310,97 @@ def MEM_BIST(test_name,write_val,status_reg,result_val):
     read_apb_reg("030000ec")
     
     #print "D0"-BIST status register
-    read_apb_reg("030000D0")
+    read_apb_reg("030000d0")
     #print "D4"-BIST status register
-    read_apb_reg("030000D4")
+    read_apb_reg("030000d4")
     #print "CC"-BIST CNTRL register
     read_apb_reg("030000cc")
+     
+    #configure LDO supply
+    #input voltage (VCC) is 1.1V 
+    if LDO=="0.9":
+        set_bit("0300003c","000f")  #LC=15, LDO level in VDD =15
+        set_bit("0300003c","0010")  #LDO enable 
+    elif LDO=="bypass":
+        set_bit("03000044","1")     #enable weak pull
+        clear_bit("0300003c","0010")#LDO disable 
+        clear_bit("03000044","1")   #disable weak pull
     
+    #configure PLL frequency and the UART new frequency
+   # if PLL=="25":
+        
+    if PLL=="49":
+        write_apb_reg("03000084","80032b02")
+        write_apb_reg("03000008","8000000")
+        write_apb_reg("0300004c","88025614")
+        
+       #uart 1418345
+       # SerialConfig_1('COM9' , 1418345)
+        
+        read_apb_reg("03000000")
+        write_apb_reg("030000ec","2280")
+        write_apb_reg("0300004c","88025614")
+        write_apb_reg("03000000","fff")
+        write_apb_reg("03000004","5db00")
+        write_apb_reg("03000008","0")
+        #SerialConfig_1('COM9' , 754974)
+        #uart 754974
+        sync()
+        checkSum()
+    elif PLL=="73":
+        write_apb_reg("03000084","80032b02")
+        write_apb_reg("0300004c","88025614")
+        #uart 1418345
+        
+        read_apb_reg("03000000")
+        write_apb_reg("030000ec","2280")
+        write_apb_reg("0300004c","88025614")
+        write_apb_reg("03000000","fff")
+        write_apb_reg("03000004","8c900")
+        write_apb_reg("03000008","0")
+        #uart 1132462
+        
+    elif PLL=="86":
+        write_apb_reg("3000084","80032B02")
+        write_apb_reg("3000008","8000000")
+        write_apb_reg("300004c","88025614")
+       
+        #uart 1418345
+        read_apb_reg("3000000")
+        write_apb_reg("30000ec","2280")
+        write_apb_reg("300004c","88025614")
+        write_apb_reg("3000000","fff")
+        write_apb_reg("3000004","a4000")
+        write_apb_reg("3000008","0")
+        #uart 1320000
+ 
+    elif PLL=="98":
+        write_apb_reg("3000084","80032B02")
+        write_apb_reg("3000008","8000000")
+        write_apb_reg("300004c","88025614")
+       
+        #uart 1418345
+        read_apb_reg("3000000")
+        write_apb_reg("30000ec","2280")
+        write_apb_reg("300004c","88025614")
+        write_apb_reg("3000000","fff")
+        write_apb_reg("3000004","bb700")
+
+    elif PLL=="122":
+        write_apb_reg("3000084","80032B02")
+        write_apb_reg("3000008","8000000")
+        write_apb_reg("300004c","88025614")
+       
+        #uart 1418345
+        read_apb_reg("3000000")
+        write_apb_reg("30000ec","2280")
+        write_apb_reg("300004c","88025614")
+        write_apb_reg("3000000","fff")
+        write_apb_reg("3000004","ea500")
+        write_apb_reg("3000008","0")
+        #uart 1870000
+        
+        
     #added configuration for this two tests
     print "#######",test_name,"#######"
     if test_name=="HWVAD":
@@ -335,13 +420,15 @@ def MEM_BIST(test_name,write_val,status_reg,result_val):
         ROM_sig="0110100000111101000001101100000010111100011011100000011111111111"
         ROM_sig_LSB=ROM_sig[0:32]
         ROM_sig_MSB=ROM_sig[32:64]
-        read_apb_reg("030000d8") ##ROM LSB address
+        ROM_sig_LSB_addr="030000d8"
+        ROM_sig_MSB_addr="030000dc"
+        read_apb_reg("030000d8")
         ROM_sig_LSB_read=apb_reg
         reg=int(apb_reg,16)
         ROM_sig_LSB_read=bin(reg).zfill(32)
         print "LSB register -bin"
         print ROM_sig_LSB_read[2:33]
-        read_apb_reg("030000dc") ##ROM MSB address
+        read_apb_reg("030000dc")
         reg=int(apb_reg,16)
         ROM_sig_MSB_read=bin(reg).zfill(32)
         print "MSB register -bin"
