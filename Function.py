@@ -22,10 +22,9 @@ def SerialConfig_1(COM , BAUD_RATE):
     ser.stopbits = STOP_BITS
     ser.timeout = TIME_SERIAL
     ser.open()
-    print 'ser = \n\n', ser
-    print '##################################'
-    print 'Function  SerialConfig_1 load !!'
-    print '##################################'
+    #print '##################################'
+    #print 'Function  SerialConfig_1 load !!'
+    #print '##################################'
 
 def SerialConfig_2(COM , BAUD_RATE):
     global ser_2
@@ -38,11 +37,9 @@ def SerialConfig_2(COM , BAUD_RATE):
     ser_2.stopbits = STOP_BITS
     ser_2.timeout = TIME_SERIAL
     ser.open()
-    print 'ser_2 = \n\n', ser_2
-
-    print ''
-    print 'Function  SerialConfig_2 load !!'
-    print '##################################'
+    #print "##################################''
+    #print "Function  SerialConfig_2 load !!"
+    #print "##################################"
        
 ####################################################################################################################################
 #SYNC withloaded
@@ -50,6 +47,7 @@ def Sync ():
     D4_received_word = ''
     timeout_start = time.time()
     timeout = 10
+    reset_time = 0
     while ((D4_received_word != "OK") and (time.time() < (timeout_start + timeout))):
         ser.write(chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
                   +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
@@ -74,12 +72,14 @@ def Sync ():
         Add_To_File("\n\n")
         print "need Restart to the D6"
         Add_To_File("need Restart to the D6")
+        reset ()
+        time.sleep (1)
+        
         print "#################################"
-        #log.write("No Sync\n")
-    time.sleep(0.5)
-    print ''
-    print 'Function  Sync load !!'
-    print ''
+        print "call to the Sync function, loop number" ,reset_time
+        print "\n\n"
+        reset_time =  reset_time +1
+        sync ()
 
 ####################################################################################################################################
 #read APB Address
@@ -88,24 +88,24 @@ def read_apb_reg(addr):
     print "#####read:" 
     print ("address: ",addr)
     global apb_reg
-    #addr6="0x"+addr[6]+addr[7]
-    #addr4="0x"+addr[4]+addr[5]
-    #addr2="0x"+addr[2]+addr[3]
-    #addr0="0x"+addr[0]+addr[1]
-    
+    #fill with zero for 8 bit word
+        
     #convert hexa value to ascii and divide to little indian
+    #print addr6
+    #print addr4
     asciiaddr6=binascii.unhexlify(addr[6]+addr[7])
     asciiaddr4=binascii.unhexlify(addr[4]+addr[5])
     asciiaddr2=binascii.unhexlify(addr[2]+addr[3])
     asciiaddr0=binascii.unhexlify(addr[0]+addr[1])
-    
+    #read apb register- command to D4
     #read apb register- command to D4
     ser.write(chr(0x5A)+chr(0x07)+asciiaddr6+asciiaddr4+asciiaddr2+asciiaddr0)
     time.sleep(0.1)
-    reg=ser.read(6)
+    reg=ser.read(20)
     
     #convert ascii to hex value
     apb_reg =binascii.hexlify(reg[5])+binascii.hexlify(reg[4])+binascii.hexlify(reg[3])+binascii.hexlify(reg[2])
+
     print "#################################"
     print "Read Address ", addr ,"return value", apb_reg
     Add_To_File("Read Address ")
@@ -116,9 +116,9 @@ def read_apb_reg(addr):
     Add_To_File("\n\n")
     print "#################################"
     
-    print ''
-    print 'Function  read_apb_reg load !!'
-    print ''
+print ''
+print 'Function  read_apb_reg load !!'
+print ''
 
 #########################################################################################################################################################
 #write APB Address
@@ -146,7 +146,7 @@ def write_apb_reg(addr,value):
     asciiaddr0=binascii.unhexlify(addr[0]+addr[1])
     
     #write apb register- command to D4
-    ser.write(chr(0x5A)+chr(0x04)+asciiaddr6+asciiaddr4+asciiaddr2+asciiaddr0+asciivalue6+asciivalue4+asciivalue2+asciivalue0)
+    test = ser.write(chr(0x5A)+chr(0x04)+asciiaddr6+asciiaddr4+asciiaddr2+asciiaddr0+asciivalue6+asciivalue4+asciivalue2+asciivalue0)
     time.sleep(0.1)
     
     print '#################################'
@@ -159,9 +159,9 @@ def write_apb_reg(addr,value):
     Add_To_File("\n\n")
     print "#################################"
     
-    print ''
-    print 'Function  write_apb_reg load !!'
-    print '##################################'
+print ''
+print 'Function  read_apb_reg load !!'
+print '##################################'
 
 #########################################################################################################################################################
 #checkSum
@@ -179,6 +179,16 @@ def checkSum():
     
     ser.flushInput()
     time.sleep(0.5)
+    
+    print '#################################'
+    print "Check Checksum", ReadSerial 
+    Add_To_File("Check Checksum")
+    Add_To_File(ReadSerial)
+    Add_To_File("\n\n")
+    print "#################################"
+    #print ''
+    #print 'Function  checkSum load !!'
+    #print '##################################'
 
     print ''
     print 'Function  checkSum load !!'
@@ -222,8 +232,10 @@ def Add_To_File(Add_Line):
 def reset():
     #GP_DIR_OUT configure GPIO10 to output
     write_apb_reg("04000010","0400")
+    time.sleep (1)
     #GP_DATA_CLR configure GPIO10 to low (set to 0)
     write_apb_reg("04000008","0400")
+    print "Reset the D6 Board"
     
 #########################################################################################################################################################
 # clear_bit = clear the wanted bits in the register
@@ -464,8 +476,199 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,PLL,LDO):
         print "pass"
 
 
+#########################################################################################################################################################
+# Clock out for D4 - D6
+#################################
+def Clock_Out (clock_source):
+    print ("\n\n selected clock source out on GPIO4 = " , clock_source, "\n\n")
+    # set GPIO4 to clock P function , reg IOM1
+    write_apb_reg ("0300004c","88025215")
+    # set GPIO4 to clock P function , reg IOM1
+    write_apb_reg ("030000ec","2100")
+    time.sleep(1)
+    # we have bug hear 
+    # set GPIO4 to clock P function , reg IOM1
+    #set_bit ("0300001c", "10")
+    #time.sleep(0.5)
+    # set GPIO4 to correct direction , reg GP_DIR_OUT
+    #set_bit("03000010", "10")
+    #time.sleep(0.5)
+    if  clock_source == "PLL":
+            # set clock out ,reg TEST_MODES_CTRL1
+            write_apb_reg("030000ec","2140")
+            time.sleep(1)
+    elif    clock_source == "Global":
+                # set clock out ,reg TEST_MODES_CTRL1 tp OSC
+                write_apb_reg("030000ec","20c0")
+                time.sleep(1)
+    elif    clock_source == "OSC":
+                # set clock out ,reg TEST_MODES_CTRL1
+                write_apb_reg("030000ec","2180")
+                time.sleep(1)
+    
 
+#########################################################################################################################################################
+# change the PLL system clock for D4 - D6
+#################################
 
+def System_Clock_PLL (freq):
+    Add_To_File("\n\n Switch to OSC , OSC freq = 92M \n\n")
+    print "\n\n Switch to OSC , OSC freq = 92M \n\n"
+    read_apb_reg ("3000084")
+    print "\n\n set OSC to 92M \n\n"
+    write_apb_reg("03000084","80032b02")
+    time.sleep(2)
+    read_apb_reg ("3000008")
+    print "\n\n Move the system to OSC 92M \n\n"
+    write_apb_reg("03000008","8000000")
+    time.sleep(2)
+    print "\n\n Change the COM Baudrate to 1418345 \n\n"
+    SerialConfig_1(COM , 1418345)
+    time.sleep(2)
+    read_apb_reg ("3000084")
+    print "\n\n System successfully moved to OSC!!! \n\n"
+    ##################################
+    if freq == "32": #32.768MHz
+        print "\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        Add_To_File("Start to Configure the System_Clock_PLL to = ")
+        Add_To_File(freq)
+        Add_To_File("\n\n")
+        # change the PLL  div reg
+        write_apb_reg("3000004", "003e700") 
+        time.sleep(2)
+        # change the PLL  BWAJ
+        write_apb_reg("3000000", "11f3")
+        time.sleep(2)
+        print "\n Return the system to PLL \n"
+        write_apb_reg ("3000008", "00000000")
+        time.sleep(2)
+        print "\nChange the COM Baudrate to 504123\n"
+        SerialConfig_1(COM , 504123)
+        time.sleep(2)
+        read_apb_reg ("3000004")
+        print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File(" configure System_Clock_PLL to ")
+        Add_To_File(freq)
+        Add_To_File("MHz Completed !!!\n\n")
+    ##################################
+    elif freq == "49": #49.152MHz
+        print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        Add_To_File("Start to Configure the System_Clock_PLL to = ")
+        Add_To_File(freq)
+        Add_To_File("\n\n")
+        # change the PLL  div reg
+        write_apb_reg("3000004", "005db00") 
+        time.sleep(2)
+        # change the PLL  BWAJ
+        write_apb_reg("3000000", "12ed")
+        time.sleep(2)
+        print "\n Return the system to PLL \n"
+        write_apb_reg ("3000008", "00000000")
+        time.sleep(2)
+        print "\nChange the COM Baudrate to 756184 \n"
+        SerialConfig_1(COM , 756184)
+        time.sleep(2)
+        read_apb_reg ("3000004")
+        print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File(" configure System_Clock_PLL to ")
+        Add_To_File(freq)
+        Add_To_File("MHz Completed !!!\n\n")
+        ##################################
+    elif freq == "73": #73.728Mhz
+        print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        Add_To_File("Start to Configure the System_Clock_PLL to = ")
+        Add_To_File(freq)
+        Add_To_File("\n\n")
+        # change the PLL  div reg
+        write_apb_reg("3000004", "008c900") 
+        time.sleep(2)
+        # change the PLL  BWAJ
+        write_apb_reg("3000000", "1464")
+        time.sleep(2)
+        print "\n Return the system to PLL \n"
+        write_apb_reg ("3000008", "00000000")
+        time.sleep(2)
+        print "\nChange the COM Baudrate to 1134276 \n"
+        SerialConfig_1(COM , 1134276)
+        time.sleep(2)
+        read_apb_reg ("3000004")
+        print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File(" configure System_Clock_PLL to ")
+        Add_To_File(freq)
+        Add_To_File("MHz Completed !!!\n\n")
+        ##################################
+    elif freq == "82": # 82,247,680 hz
+        print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        Add_To_File("Start to Configure the System_Clock_PLL to = ")
+        Add_To_File(freq)
+        Add_To_File("\n\n")
+        # change the PLL  div reg
+        write_apb_reg("3000004", "009cd00") 
+        time.sleep(2)
+        # change the PLL  BWAJ
+        write_apb_reg("3000000", "14e6")
+        time.sleep(2)
+        print "\n Return the system to PLL \n"
+        write_apb_reg ("3000008", "00000000")
+        time.sleep(2)
+        print "\nChange the COM Baudrate to 1265348 \n"
+        SerialConfig_1(COM , 1265348)
+        time.sleep(2)
+        read_apb_reg ("3000004")
+        print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File(" configure System_Clock_PLL to ")
+        Add_To_File(freq)
+        Add_To_File("MHz Completed !!!\n\n")
+        ##################################
+    elif freq == "92": #49.152MHz
+        print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        Add_To_File("Start to Configure the System_Clock_PLL to = ")
+        Add_To_File(freq)
+        Add_To_File("\n\n")
+        # change the PLL  div reg
+        write_apb_reg("3000004", "00af600") 
+        time.sleep(2)
+        # change the PLL  BWAJ
+        write_apb_reg("3000000", "157b")
+        time.sleep(2)
+        print "\n Return the system to PLL \n"
+        write_apb_reg ("3000008", "00000000")
+        time.sleep(2)
+        print "\nChange the COM Baudrate to 1415384 \n"
+        SerialConfig_1(COM , 1415384)
+        time.sleep(2)
+        read_apb_reg ("3000004")
+        print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File(" configure System_Clock_PLL to ")
+        Add_To_File(freq)
+        Add_To_File("MHz Completed !!!\n\n")
+        ##################################
+    elif freq == "98": #98.304Mhz
+        print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        Add_To_File("Start to Configure the System_Clock_PLL to = ")
+        Add_To_File(freq)
+        Add_To_File("\n\n")
+        # change the PLL  div reg
+        write_apb_reg("3000004", "00bb700") 
+        time.sleep(2)
+        # change the PLL  BWAJ
+        write_apb_reg("3000000", "15db")
+        time.sleep(2)
+        print "\n Return the system to PLL \n"
+        write_apb_reg ("3000008", "00000000")
+        time.sleep(2)
+        print "\nChange the COM Baudrate to 1512369 \n"
+        SerialConfig_1(COM , 1512369)
+        time.sleep(2)
+        read_apb_reg ("3000004")
+        print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File(" configure System_Clock_PLL to ")
+        Add_To_File(freq)
+        Add_To_File("MHz Completed !!!\n\n")
+        ##################################
+###############################################################################################################################
+    else :
+            print "Error no legal freq selected"
 
 
 

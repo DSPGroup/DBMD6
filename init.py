@@ -20,5 +20,14 @@ import datetime
 import shutil
 import binascii
 
-execfile("G:\Chip_Validation\Python\Hen\infrastructure\Init_Configuration.py")
-execfile("G:\Chip_Validation\Python\Hen\infrastructure\Function.py")
+##########################################################
+#Hen File Configuration
+##########################################################
+#execfile("G:\Chip_Validation\Python\Hen\infrastructure\Init_Configuration.py")
+#execfile("G:\Chip_Validation\Python\Hen\infrastructure\Function.py")
+
+##########################################################
+#Eran File Configuration
+##########################################################
+execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Init_Configuration.py")
+execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Function.py")
