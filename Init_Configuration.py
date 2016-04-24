@@ -11,7 +11,7 @@
 #########################################
 #####     Uart Basic Configuration
 #########################################
-COM = 'COM6'
+COM = 'COM4'
 BAUD_RATE = 921600
 BYTE_SIZE = 8
 PARIT = 'N'

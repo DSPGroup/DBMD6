@@ -85,20 +85,24 @@ def Sync ():
 #read APB Address
 #################################
 def read_apb_reg(addr):
+    print "#####read:" 
+    print ("address: ",addr)
     global apb_reg
     #fill with zero for 8 bit word
-    if len(addr)<8:
-        addr = addr.zfill(8)
-    
+        
     #convert hexa value to ascii and divide to little indian
+    #print addr6
+    #print addr4
     asciiaddr6=binascii.unhexlify(addr[6]+addr[7])
     asciiaddr4=binascii.unhexlify(addr[4]+addr[5])
     asciiaddr2=binascii.unhexlify(addr[2]+addr[3])
     asciiaddr0=binascii.unhexlify(addr[0]+addr[1])
     #read apb register- command to D4
+    #read apb register- command to D4
     ser.write(chr(0x5A)+chr(0x07)+asciiaddr6+asciiaddr4+asciiaddr2+asciiaddr0)
     time.sleep(0.1)
     reg=ser.read(20)
+    
     #convert ascii to hex value
     apb_reg =binascii.hexlify(reg[5])+binascii.hexlify(reg[4])+binascii.hexlify(reg[3])+binascii.hexlify(reg[2])
 
@@ -112,22 +116,22 @@ def read_apb_reg(addr):
     Add_To_File("\n\n")
     print "#################################"
     
-    #print ''
-    #print 'Function  read_apb_reg load !!'
-    #print ''
+print ''
+print 'Function  read_apb_reg load !!'
+print ''
 
 #########################################################################################################################################################
 #write APB Address
 #################################
 def write_apb_reg(addr,value):
-    #print "#####write:" 
+    print "#####write:" 
     
     #fill with zero for 8 bit word
     if len(value)<8:
         value = value.zfill(8)
     if len(addr)<8:
         addr = addr.zfill(8)
-    #print ("address: ",addr, "value: ",value)
+    print ("address: ",addr, "value: ",value)
     
     #convert hexa value to ascii and divide to little indian
     asciivalue6=binascii.unhexlify(value[6]+value[7])
@@ -155,9 +159,9 @@ def write_apb_reg(addr,value):
     Add_To_File("\n\n")
     print "#################################"
     
-    #print ''
-    #print 'Function  write_apb_reg load !!'
-    #print '##################################'
+print ''
+print 'Function  read_apb_reg load !!'
+print '##################################'
 
 #########################################################################################################################################################
 #checkSum
@@ -171,6 +175,8 @@ def checkSum():
     ser.flushInput()
     ReadSerial = ser.read(8)
     time.sleep(0.1)
+    
+    
     ser.flushInput()
     time.sleep(0.5)
     
@@ -183,6 +189,10 @@ def checkSum():
     #print ''
     #print 'Function  checkSum load !!'
     #print '##################################'
+
+    print ''
+    print 'Function  checkSum load !!'
+    print '##################################'
 
 #########################################################################################################################################################
 # create a new directory 
@@ -235,31 +245,31 @@ def clear_bit(addr,bits_clr_hex):
         bits_clr_hex = bits_clr_hex.zfill(8)
     if len(addr)<8:
        addr = addr.zfill(8)
-    #print ("addr:  ",addr,"clear value:  ",bits_clr_hex)
+    print ("addr:  ",addr,"clear value:  ",bits_clr_hex)
    
     #get current value and change it to binary
     read_apb_reg(addr)
     reg=int(apb_reg,16)
     binReg=bin(reg).zfill(32)
-    #print ("bin reg:       ", binReg[2:])
+    print ("bin reg:       ", binReg[2:])
     
     #change the bits clear value from hex to binary
     int_bits_clr=int(bits_clr_hex,16)
     bin_bits_clr=bin(int_bits_clr).zfill(32)
-    #print ("bin bits clr:  ",bin_bits_clr[:])
+    print ("bin bits clr:  ",bin_bits_clr[:])
     
     #execute set by using (A and not(B)) operator between current value to the wanted bits to be set
     fin_reg=0
     int_fin_reg=0
     int_fin_reg=(~(int_bits_clr) & reg)
     bin_fin_reg=bin(int_fin_reg).zfill(32)
-    #print ("bin final:     ", bin_fin_reg[2:])
+    print ("bin final:     ", bin_fin_reg[2:])
     
     #change the value of the register, after set was done, to hex
     hex_1=hex(int_fin_reg)
     hex_2=hex_1[2:]
     hex_fin_reg=hex_2[:8]
-    #print ("hex final:  ",hex_fin_reg)
+    print ("hex final:  ",hex_fin_reg)
     
     #write the new value to the register
     write_apb_reg(addr,hex_fin_reg)
@@ -272,31 +282,31 @@ def set_bit(addr,bits_set_hex):
         bits_set_hex = bits_set_hex.zfill(8)
     if len(addr)<8:
        addr = addr.zfill(8)
-    #print ("address:  ",addr,"set value:  ",bits_set_hex)   
+    print ("address:  ",addr,"set value:  ",bits_set_hex)   
     
     #get current value and change it to binary
     read_apb_reg(addr)
     reg=int(apb_reg,16)
     binReg=bin(reg).zfill(32)
-    #print ("bin reg:       ", binReg[2:])
+    print ("bin reg:       ", binReg[2:])
     
     #change the bits_set value from hex to binary
     int_bits_set=int(bits_set_hex,16)
     bin_bits_set=bin(int_bits_set).zfill(32)
-    #print ("bin bits set:  ", bin_bits_set[:])
+    print ("bin bits set:  ", bin_bits_set[:])
     
     #execute set by using OR operator between current value to the wanted bits to be set
     fin_reg=0
     int_fin_reg=0
     int_fin_reg=(int_bits_set | reg)
     bin_fin_reg=bin(int_fin_reg).zfill(32)
-    #print ("bin final:     ", bin_fin_reg[2:])
+    print ("bin final:     ", bin_fin_reg[2:])
     
     #after set was done, change the value to hex before calling write_apb_reg function
     hex_1=hex(int_fin_reg)
     hex_2=hex_1[2:]
     hex_fin_reg=hex_2[:8]
-    #print ("hex final:  ",hex_fin_reg)
+    print ("hex final:  ",hex_fin_reg)
     
     #write the new value to the register
     write_apb_reg(addr,hex_fin_reg)
@@ -659,5 +669,9 @@ def System_Clock_PLL (freq):
 ###############################################################################################################################
     else :
             print "Error no legal freq selected"
+
+
+
+
 
 
