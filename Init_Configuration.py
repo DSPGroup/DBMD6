@@ -41,3 +41,29 @@ Test_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 Test_Time = datetime.datetime.strftime(datetime.datetime.now(), '%H-%M-%S')
 Log_Name = Character1 + Test_Name + Character2 + Test_Date + Character2 + Test_Time + '.txt'
 
+#########################################
+#####     Memory address offset
+#########################################
+#light  sleep mode reg == 
+MEM_PWR_MD_LS1 = "30000a0"
+MEM_PWR_MD_LS2 = "30000a4"
+MEM_PWR_MD_DS1 ="30000a8"
+MEM_PWR_MD_DS2 = "30000ac"
+MEM_PWR_MD_SD1 = "30000b0"
+MEM_PWR_MD_SD2 = "30000b4"
+#########################
+
+PTCM_Start_Bit =18
+DTCM_Start_Bit =6
+TAG_Start_Bit = 4
+CACHE_Start_Bit =0
+PAHB_Start_Bit =1
+HWVAD_Start_Bit = 1
+
+PTCM =[ "40000" ,"C0000",	"1C0000","3C0000",	"7C0000","FC0000",	"1FC0000", "3FC0000"]
+DTCM = ["3C0",	"7C0",	"FC0", "1FC0", "3FC0", "7FC0", "FFC0", "1FFC0", "3FFC0"]
+TAG = 
+CACHE =
+PAHB = 
+HWVAD0 =
+HWVAD1= 
