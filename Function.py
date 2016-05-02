@@ -670,6 +670,62 @@ def System_Clock_PLL (freq):
     else :
             print "Error no legal freq selected"
 
+def All_Memory_Power_Mode (mode):
+    if (mode == "light_sleep" ):
+        #need to verify clear bit of the following modes := deep_sleep and  shut_down
+        print"/n/n clear the bits of deep_sleep /n/n"
+        clear_bit (MEM_PWR_MD_DS1,"3ffffff")
+        clear_bit (MEM_PWR_MD_DS1,"ffe")
+        print"/n/n clear the bits of shut_down /n/n"
+        clear_bit (MEM_PWR_MD_SD1,"3ffffff")
+        clear_bit (MEM_PWR_MD_DS1,"ffe")
+        
+        #set the light_sleep mode
+        set_bit (MEM_PWR_MD_LS1,"3ffffff")
+        set_bit (MEM_PWR_MD_LS2,"1fff")
+        print"all the following block enter to light_sleep \n\n"
+        print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+        
+    elif (mode == "deep_sleep" ):
+        #need to verify clear bit of the following modes := light_sleep and  shut_down
+        print"/n/n clear the bits of deep_sleep /n/n"
+        clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+        clear_bit (MEM_PWR_MD_LS2,"1fff")
+        print"/n/n clear the bits of shut_down /n/n"
+        clear_bit (MEM_PWR_MD_SD1,"3ffffff")
+        clear_bit (MEM_PWR_MD_DS1,"ffe")
+        
+        #set the deep_sleep mode
+        set_bit (MEM_PWR_MD_DS1,"3ffffff")
+        set_bit (MEM_PWR_MD_DS1,"ffe")
+        print"all the following block enter to deep_sleep \n\n"
+        print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , PAHB0 "
+        
+    elif (mode == "shut_down" ):
+        
+        set_bit (MEM_PWR_MD_SD1,"3ffffff")
+        set_bit (MEM_PWR_MD_DS1,"ffe")
+        print"all the following block enter to shut_down \n\n"
+        print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+
+def  Memory_Block (memory_name , memory_section , mode):
+    print ""
+    if (memory_name == "PTCM"):
+        print""
+        if (mode == "Light_sleep" ):
+            print ""
+        elif (mode == "Deep_Sleep" ):
+            print ""
+        elif (mode == "Shut_Down" ):
+
+
+
+
+
+
+
+
+
 
 
 
