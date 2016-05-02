@@ -11,7 +11,7 @@
 #########################################
 #####     Uart Basic Configuration
 #########################################
-COM = 'COM4'
+COM = 'COM6'
 BAUD_RATE = 921600
 BYTE_SIZE = 8
 PARIT = 'N'
@@ -20,10 +20,14 @@ TIME_SERIAL = 1
 #########################################
 
 #########################################
-#####     Create Folder
+#####     Hen Create Folder
 #########################################
+#Path_Folder = r'G:\Chip_Validation\Python\Hen'
 
-Path_Folder = r'G:\Chip_Validation\Python\Hen'
+#########################################
+#####     Eran Create Folder
+#########################################
+Path_Folder = r'C:\tmp\Python\\'
 
 Folder_Name = "Test Result"
 Folder_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
@@ -60,10 +64,11 @@ CACHE_Start_Bit =0
 PAHB_Start_Bit =1
 HWVAD_Start_Bit = 1
 
-PTCM =[ "40000" ,"C0000",	"1C0000","3C0000",	"7C0000","FC0000",	"1FC0000", "3FC0000"]
+PTCM = [ "40000" ,"C0000","1C0000","3C0000",	"7C0000","FC0000",	"1FC0000", "3FC0000"]
 DTCM = ["3C0",	"7C0",	"FC0", "1FC0", "3FC0", "7FC0", "FFC0", "1FFC0", "3FFC0"]
-TAG = 
-CACHE =
-PAHB = 
-HWVAD0 =
-HWVAD1= 
+TAG = ["10" , "30"]
+CACHE = ["1","3","7","F"]
+PAHB = ["2","6","E","1E","3E","7E","FE","1FE", "3FE","7FE"]
+# only can configure on the  "Light_sleep" mode !
+HWVAD0 =[1000]
+HWVAD1= [1]
