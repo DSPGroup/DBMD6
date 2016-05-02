@@ -85,20 +85,16 @@ def Sync ():
 #read APB Address
 #################################
 def read_apb_reg(addr):
-    print "#####read:" 
-    print ("address: ",addr)
     global apb_reg
     #fill with zero for 8 bit word
-        
+    if len(addr)<8:
+        addr = addr.zfill(8)    
     #convert hexa value to ascii and divide to little indian
-    #print addr6
-    #print addr4
     asciiaddr6=binascii.unhexlify(addr[6]+addr[7])
     asciiaddr4=binascii.unhexlify(addr[4]+addr[5])
     asciiaddr2=binascii.unhexlify(addr[2]+addr[3])
     asciiaddr0=binascii.unhexlify(addr[0]+addr[1])
-    #read apb register- command to D4
-    #read apb register- command to D4
+
     ser.write(chr(0x5A)+chr(0x07)+asciiaddr6+asciiaddr4+asciiaddr2+asciiaddr0)
     time.sleep(0.1)
     reg=ser.read(20)
@@ -124,14 +120,12 @@ print ''
 #write APB Address
 #################################
 def write_apb_reg(addr,value):
-    print "#####write:" 
     
     #fill with zero for 8 bit word
     if len(value)<8:
         value = value.zfill(8)
     if len(addr)<8:
         addr = addr.zfill(8)
-    print ("address: ",addr, "value: ",value)
     
     #convert hexa value to ascii and divide to little indian
     asciivalue6=binascii.unhexlify(value[6]+value[7])
@@ -480,7 +474,7 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,PLL,LDO):
 # Clock out for D4 - D6
 #################################
 def Clock_Out (clock_source):
-    print ("\n\n selected clock source out on GPIO4 = " , clock_source, "\n\n")
+    print ("/n/n selected clock source out on GPIO4 = " , clock_source, "\n\n")
     # set GPIO4 to clock P function , reg IOM1
     write_apb_reg ("0300004c","88025215")
     # set GPIO4 to clock P function , reg IOM1
@@ -666,25 +660,28 @@ def System_Clock_PLL (freq):
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
         ##################################
-###############################################################################################################################
     else :
-            print "Error no legal freq selected"
-
-def All_Memory_Power_Mode (mode):
+        print "Error no legal freq selected"
+###############################################################################################################################
+ 
+def All_Memory_Power_Mode (power_mode, on_off):
     if (mode == "light_sleep" ):
         #need to verify clear bit of the following modes := deep_sleep and  shut_down
         print"/n/n clear the bits of deep_sleep /n/n"
         clear_bit (MEM_PWR_MD_DS1,"3ffffff")
-        clear_bit (MEM_PWR_MD_DS1,"ffe")
+        clear_bit (MEM_PWR_MD_DS2,"ffe")
         print"/n/n clear the bits of shut_down /n/n"
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
-        
-        #set the light_sleep mode
-        set_bit (MEM_PWR_MD_LS1,"3ffffff")
-        set_bit (MEM_PWR_MD_LS2,"1fff")
-        print"all the following block enter to light_sleep \n\n"
-        print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+        if (on_off == "1"):
+            #set the light_sleep mode
+            set_bit (MEM_PWR_MD_LS1,"3ffffff")
+            set_bit (MEM_PWR_MD_LS2,"1fff")
+            print"all the following block enter to light_sleep \n\n"
+            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+        else :
+            clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+            clear_bit (MEM_PWR_MD_LS2,"1fff")
         
     elif (mode == "deep_sleep" ):
         #need to verify clear bit of the following modes := light_sleep and  shut_down
@@ -694,30 +691,61 @@ def All_Memory_Power_Mode (mode):
         print"/n/n clear the bits of shut_down /n/n"
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
-        
-        #set the deep_sleep mode
-        set_bit (MEM_PWR_MD_DS1,"3ffffff")
-        set_bit (MEM_PWR_MD_DS1,"ffe")
-        print"all the following block enter to deep_sleep \n\n"
-        print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , PAHB0 "
+        if (on_off == "1"):
+            #set the deep_sleep mode
+            set_bit (MEM_PWR_MD_DS1,"3ffffff")
+            set_bit (MEM_PWR_MD_DS1,"ffe")
+            print"all the following block enter to deep_sleep \n\n"
+            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , PAHB0 "
+        else :
+            print"/n/n SET Momory in Active Mode /n/n"
+            clear_bitclear_bit (MEM_PWR_MD_DS1,"3ffffff")
+            clear_bit (MEM_PWR_MD_DS1,"ffe")
         
     elif (mode == "shut_down" ):
-        
-        set_bit (MEM_PWR_MD_SD1,"3ffffff")
-        set_bit (MEM_PWR_MD_DS1,"ffe")
-        print"all the following block enter to shut_down \n\n"
-        print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+        if (on_off == "1"):
+            set_bit (MEM_PWR_MD_SD1,"3ffffff")
+            set_bit (MEM_PWR_MD_DS1,"ffe")
+            print"all the following block enter to shut_down \n\n"
+            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+        else:
+            print"/n/n SET Momory in Active Mode /n/n"
+            clear_bitclear_bit (MEM_PWR_MD_DS1,"3ffffff")
+            clear_bit (MEM_PWR_MD_DS1,"ffe")
+            print"/n/n clear the bits of deep_sleep /n/n"
+            clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+            clear_bit (MEM_PWR_MD_LS2,"1fff")
+            print"/n/n clear the bits of shut_down /n/n"
+            clear_bit (MEM_PWR_MD_SD1,"3ffffff")
+            clear_bit (MEM_PWR_MD_DS1,"ffe")
+            
+            
+###############################################################################################################################
+###############################################################################################################################   
+def  Memory_Block_Select (memory_name , memory_section , mode):
+    All_Memory_Power_Mode (Light_sleep , 0)
+    
+    list1 = [PTCM,DTCM,TAG,CACHE,PAHB]
+    list2 = [HWVAD0, HWVAD1,PAHB0,ROM]
+    
+    if (mode == "Light_sleep" ):
+        if (memory_name in list1):
+            set_bit (MEM_PWR_MD_LS1,memory_name[memory_section])
+        elif (memory_name in list2):
+            set_bit (MEM_PWR_MD_LS2,memory_name[memory_section])
+    
+    elif (mode == "Deep_Sleep" ):
+        if (memory_name in list1):
+            set_bit (MEM_PWR_MD_DS1,memory_name[memory_section])
+        elif (memory_name in list2):
+            set_bit (MEM_PWR_MD_DS2,memory_name[memory_section])
 
-def  Memory_Block (memory_name , memory_section , mode):
-    print ""
-    if (memory_name == "PTCM"):
-        print""
-        if (mode == "Light_sleep" ):
-            print ""
-        elif (mode == "Deep_Sleep" ):
-            print ""
-        elif (mode == "Shut_Down" ):
-
+    elif (mode == "Shut_Down" ):
+        if (memory_name in list1):
+            set_bit (MEM_PWR_MD_SD1,memory_name[memory_section])
+        elif (memory_name in list2):
+            set_bit (MEM_PWR_MD_SD2,memory_name[memory_section])
+          
 
 
 
