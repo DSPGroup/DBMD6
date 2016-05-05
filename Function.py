@@ -393,10 +393,18 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO):
             
     #if the end-result 0 - pass, else - fail
     if end_res > 0 :
-        Add_To_File(voltage, ' - ', test_name, ': ', "fail")
+        Add_To_File(voltage)
+        Add_To_File(' - ')
+        Add_To_File(test_name)
+        Add_To_File(': ')
+        Add_To_File("fail")
         print "fail"
     else:
-        Add_To_File(voltage, ' - ', test_name, ': ', "pass")
+        Add_To_File(voltage)
+        Add_To_File(' - ')
+        Add_To_File(test_name)
+        Add_To_File(': ')
+        Add_To_File("pass")
         print "pass"
 
 
