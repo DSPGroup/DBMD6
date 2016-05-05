@@ -307,8 +307,11 @@ def set_bit(addr,bits_set_hex):
 
 # MEM_BIST = function run the BIST test 
 #################################
-def MEM_BIST(test_name,write_val,status_reg,result_val,PLL,LDO):
-   
+def MEM_BIST(test_name,write_val,status_reg,result_val,LDO):
+    voltage="1V"
+    #voltage="1.1V"
+    #voltage="1.21V"
+    
     read_apb_reg("0300004c")
     write_apb_reg("0300004c","88025614")
     read_apb_reg("0300004c")
@@ -331,82 +334,7 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,PLL,LDO):
         set_bit("03000044","1")     #enable weak pull
         clear_bit("0300003c","0010")#LDO disable 
         clear_bit("03000044","1")   #disable weak pull
-    
-    #configure PLL frequency and the UART new frequency
-   # if PLL=="25":
-        
-    if PLL=="49":
-        write_apb_reg("03000084","80032b02")
-        write_apb_reg("03000008","8000000")
-        write_apb_reg("0300004c","88025614")
-        
-       #uart 1418345
-       # SerialConfig_1('COM9' , 1418345)
-        
-        read_apb_reg("03000000")
-        write_apb_reg("030000ec","2280")
-        write_apb_reg("0300004c","88025614")
-        write_apb_reg("03000000","fff")
-        write_apb_reg("03000004","5db00")
-        write_apb_reg("03000008","0")
-        #SerialConfig_1('COM9' , 754974)
-        #uart 754974
-        sync()
-        checkSum()
-    elif PLL=="73":
-        write_apb_reg("03000084","80032b02")
-        write_apb_reg("0300004c","88025614")
-        #uart 1418345
-        
-        read_apb_reg("03000000")
-        write_apb_reg("030000ec","2280")
-        write_apb_reg("0300004c","88025614")
-        write_apb_reg("03000000","fff")
-        write_apb_reg("03000004","8c900")
-        write_apb_reg("03000008","0")
-        #uart 1132462
-        
-    elif PLL=="86":
-        write_apb_reg("3000084","80032B02")
-        write_apb_reg("3000008","8000000")
-        write_apb_reg("300004c","88025614")
-       
-        #uart 1418345
-        read_apb_reg("3000000")
-        write_apb_reg("30000ec","2280")
-        write_apb_reg("300004c","88025614")
-        write_apb_reg("3000000","fff")
-        write_apb_reg("3000004","a4000")
-        write_apb_reg("3000008","0")
-        #uart 1320000
- 
-    elif PLL=="98":
-        write_apb_reg("3000084","80032B02")
-        write_apb_reg("3000008","8000000")
-        write_apb_reg("300004c","88025614")
-       
-        #uart 1418345
-        read_apb_reg("3000000")
-        write_apb_reg("30000ec","2280")
-        write_apb_reg("300004c","88025614")
-        write_apb_reg("3000000","fff")
-        write_apb_reg("3000004","bb700")
-
-    elif PLL=="122":
-        write_apb_reg("3000084","80032B02")
-        write_apb_reg("3000008","8000000")
-        write_apb_reg("300004c","88025614")
-       
-        #uart 1418345
-        read_apb_reg("3000000")
-        write_apb_reg("30000ec","2280")
-        write_apb_reg("300004c","88025614")
-        write_apb_reg("3000000","fff")
-        write_apb_reg("3000004","ea500")
-        write_apb_reg("3000008","0")
-        #uart 1870000
-        
-        
+         
     #added configuration for this two tests
     print "#######",test_name,"#######"
     if test_name=="HWVAD":
@@ -465,8 +393,10 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,PLL,LDO):
             
     #if the end-result 0 - pass, else - fail
     if end_res > 0 :
+        Add_To_File(voltage, ' - ', test_name, ': ', "fail")
         print "fail"
     else:
+        Add_To_File(voltage, ' - ', test_name, ': ', "pass")
         print "pass"
 
 
