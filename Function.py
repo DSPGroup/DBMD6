@@ -239,33 +239,35 @@ def clear_bit(addr,bits_clr_hex):
         bits_clr_hex = bits_clr_hex.zfill(8)
     if len(addr)<8:
        addr = addr.zfill(8)
-    print ("addr:  ",addr,"clear value:  ",bits_clr_hex)
-   
+
     #get current value and change it to binary
     read_apb_reg(addr)
     reg=int(apb_reg,16)
     binReg=bin(reg).zfill(32)
-    print ("bin reg:       ", binReg[2:])
+    #print ("bin reg:       ", binReg[2:])
     
     #change the bits clear value from hex to binary
     int_bits_clr=int(bits_clr_hex,16)
     bin_bits_clr=bin(int_bits_clr).zfill(32)
-    print ("bin bits clr:  ",bin_bits_clr[:])
+    #print ("bin bits clr:  ",bin_bits_clr[:])
     
     #execute set by using (A and not(B)) operator between current value to the wanted bits to be set
     fin_reg=0
     int_fin_reg=0
     int_fin_reg=(~(int_bits_clr) & reg)
     bin_fin_reg=bin(int_fin_reg).zfill(32)
-    print ("bin final:     ", bin_fin_reg[2:])
+    #print ("bin final:     ", bin_fin_reg[2:])
     
     #change the value of the register, after set was done, to hex
     hex_1=hex(int_fin_reg)
     hex_2=hex_1[2:]
     hex_fin_reg=hex_2[:8]
-    print ("hex final:  ",hex_fin_reg)
+    #print ("hex final:  ",hex_fin_reg)
     
     #write the new value to the register
+    print ""
+    print " Clear the following Address : " ,addr ," with value " ,hex_fin_reg
+    print ""
     write_apb_reg(addr,hex_fin_reg)
 
 #########################################################################################################################################################
@@ -276,33 +278,36 @@ def set_bit(addr,bits_set_hex):
         bits_set_hex = bits_set_hex.zfill(8)
     if len(addr)<8:
        addr = addr.zfill(8)
-    print ("address:  ",addr,"set value:  ",bits_set_hex)   
+    #print ("address:  ",addr,"set value:  ",bits_set_hex)   
     
     #get current value and change it to binary
     read_apb_reg(addr)
     reg=int(apb_reg,16)
     binReg=bin(reg).zfill(32)
-    print ("bin reg:       ", binReg[2:])
+    #print ("bin reg:       ", binReg[2:])
     
     #change the bits_set value from hex to binary
     int_bits_set=int(bits_set_hex,16)
     bin_bits_set=bin(int_bits_set).zfill(32)
-    print ("bin bits set:  ", bin_bits_set[:])
+    #print ("bin bits set:  ", bin_bits_set[:])
     
     #execute set by using OR operator between current value to the wanted bits to be set
     fin_reg=0
     int_fin_reg=0
     int_fin_reg=(int_bits_set | reg)
     bin_fin_reg=bin(int_fin_reg).zfill(32)
-    print ("bin final:     ", bin_fin_reg[2:])
+    #print ("bin final:     ", bin_fin_reg[2:])
     
     #after set was done, change the value to hex before calling write_apb_reg function
     hex_1=hex(int_fin_reg)
     hex_2=hex_1[2:]
     hex_fin_reg=hex_2[:8]
-    print ("hex final:  ",hex_fin_reg)
+    #print ("hex final:  ",hex_fin_reg)
     
     #write the new value to the register
+    print ""
+    print " Set the following Address : " ,addr ," with value " ,hex_fin_reg
+    print ""
     write_apb_reg(addr,hex_fin_reg)
 
 # MEM_BIST = function run the BIST test 
@@ -473,6 +478,30 @@ def System_Clock_PLL (freq):
     read_apb_reg ("3000084")
     print "\n\n System successfully moved to OSC!!! \n\n"
     ##################################
+    if freq == "25": #25,1986MHz
+        print "\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        Add_To_File("Start to Configure the System_Clock_PLL to = ")
+        Add_To_File(freq)
+        Add_To_File("\n\n")
+        # change the PLL  div reg
+        write_apb_reg("3000004", "0030100") 
+        time.sleep(2)
+        # change the PLL  BWAJ
+        write_apb_reg("3000000", "1180")
+        time.sleep(2)
+        print "\n Return the system to PLL \n"
+        write_apb_reg ("3000008", "00000000")
+        time.sleep(2)
+        print "\nChange the COM Baudrate to 504123\n"
+        SerialConfig_1(COM , 387670)
+        time.sleep(2)
+        read_apb_reg ("3000004")
+        print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File(" configure System_Clock_PLL to ")
+        Add_To_File(freq)
+        Add_To_File("MHz Completed !!!\n\n")
+    ##################################
+    ##################################
     if freq == "32": #32.768MHz
         print "\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
         Add_To_File("Start to Configure the System_Clock_PLL to = ")
@@ -629,87 +658,109 @@ def System_Clock_PLL (freq):
 ###############################################################################################################################
  
 def All_Memory_Power_Mode (power_mode, on_off):
-    if (mode == "light_sleep" ):
+    if (power_mode == "light_sleep" ):
         #need to verify clear bit of the following modes := deep_sleep and  shut_down
-        print"/n/n clear the bits of deep_sleep /n/n"
+        print"clear the bits of deep_sleep"
         clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS2,"ffe")
-        print"/n/n clear the bits of shut_down /n/n"
+        print"clear the bits of shut_down"
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
-        if (on_off == "1"):
+        if (on_off == 1):
             #set the light_sleep mode
             set_bit (MEM_PWR_MD_LS1,"3ffffff")
             set_bit (MEM_PWR_MD_LS2,"1fff")
-            print"all the following block enter to light_sleep \n\n"
+            print"all the following block enter to light_sleep"
             print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
         else :
             clear_bit (MEM_PWR_MD_LS1,"3ffffff")
             clear_bit (MEM_PWR_MD_LS2,"1fff")
         
-    elif (mode == "deep_sleep" ):
+    elif (power_mode == "deep_sleep" ):
         #need to verify clear bit of the following modes := light_sleep and  shut_down
-        print"/n/n clear the bits of deep_sleep /n/n"
+        print ""
+        print "clear the bits of deep_sleep"
+        print ""
         clear_bit (MEM_PWR_MD_LS1,"3ffffff")
         clear_bit (MEM_PWR_MD_LS2,"1fff")
-        print"/n/n clear the bits of shut_down /n/n"
+        print ""
+        print"clear the bits of shut_down"
+        print ""
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
-        if (on_off == "1"):
+        if (on_off == 1):
             #set the deep_sleep mode
             set_bit (MEM_PWR_MD_DS1,"3ffffff")
             set_bit (MEM_PWR_MD_DS1,"ffe")
+            print ""
             print"all the following block enter to deep_sleep \n\n"
             print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , PAHB0 "
+            print ""
         else :
-            print"/n/n SET Momory in Active Mode /n/n"
-            clear_bitclear_bit (MEM_PWR_MD_DS1,"3ffffff")
+            print ""
+            print"SET Momory in Active Mode"
+            print ""
+            clear_bit (MEM_PWR_MD_DS1,"3ffffff")
             clear_bit (MEM_PWR_MD_DS1,"ffe")
         
-    elif (mode == "shut_down" ):
-        if (on_off == "1"):
+    elif (power_mode == "shut_down" ):
+        if (on_off == 1):
             set_bit (MEM_PWR_MD_SD1,"3ffffff")
             set_bit (MEM_PWR_MD_DS1,"ffe")
+            print ""
             print"all the following block enter to shut_down \n\n"
             print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+            print ""
         else:
-            print"/n/n SET Momory in Active Mode /n/n"
-            clear_bitclear_bit (MEM_PWR_MD_DS1,"3ffffff")
+            print ""
+            print"SET Memory in Active Mode"
+            print ""
+            clear_bit (MEM_PWR_MD_DS1,"3ffffff")
             clear_bit (MEM_PWR_MD_DS1,"ffe")
-            print"/n/n clear the bits of deep_sleep /n/n"
+            print ""
+            print"clear the bits of deep_sleep"
+            print ""
             clear_bit (MEM_PWR_MD_LS1,"3ffffff")
             clear_bit (MEM_PWR_MD_LS2,"1fff")
-            print"/n/n clear the bits of shut_down /n/n"
+            print ""
+            print"clear the bits of shut_down"
+            print ""
             clear_bit (MEM_PWR_MD_SD1,"3ffffff")
             clear_bit (MEM_PWR_MD_DS1,"ffe")
             
-            
+    print "power mode configure to " , power_mode        
 ###############################################################################################################################
 ###############################################################################################################################   
 def  Memory_Block_Select (memory_name , memory_section , mode):
-    All_Memory_Power_Mode (Light_sleep , 0)
-    
+    All_Memory_Power_Mode ("light_sleep" , 0)
+
     list1 = [PTCM,DTCM,TAG,CACHE,PAHB]
-    list2 = [HWVAD0, HWVAD1,PAHB0,ROM]
+    list2 = [HWVAD0, HWVAD1,PAHB,ROM]
     
-    if (mode == "Light_sleep" ):
+    if (mode == "light_sleep" ):
         if (memory_name in list1):
             set_bit (MEM_PWR_MD_LS1,memory_name[memory_section])
         elif (memory_name in list2):
             set_bit (MEM_PWR_MD_LS2,memory_name[memory_section])
-    
-    elif (mode == "Deep_Sleep" ):
+        print ""
+        print "set bit for " , memory_name[memory_section] , ", on section = ", memory_section , ",  power mode = " , mode
+        print ""
+    elif (mode == "deep_sleep" ):
         if (memory_name in list1):
             set_bit (MEM_PWR_MD_DS1,memory_name[memory_section])
         elif (memory_name in list2):
             set_bit (MEM_PWR_MD_DS2,memory_name[memory_section])
-
-    elif (mode == "Shut_Down" ):
+        print ""
+        print "set bit for " , memory_name[memory_section] , ", on section = ", memory_section , ",  power mode = " , mode
+        print ""
+    elif (mode == "shut_down" ):
         if (memory_name in list1):
             set_bit (MEM_PWR_MD_SD1,memory_name[memory_section])
         elif (memory_name in list2):
             set_bit (MEM_PWR_MD_SD2,memory_name[memory_section])
-          
+        print ""
+        print "set bit for " , memory_name , memory_name[memory_section] , ", on section = ", memory_section , ", power mode = " , mode
+        print ""          
 
 
 
