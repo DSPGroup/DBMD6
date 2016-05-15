@@ -69,6 +69,7 @@ DTCM = ["3C0",	"7C0",	"FC0", "1FC0", "3FC0", "7FC0", "FFC0", "1FFC0", "3FFC0"]
 TAG = ["10" , "30"]
 CACHE = ["1","3","7","F"]
 PAHB = ["2","6","E","1E","3E","7E","FE","1FE", "3FE","7FE"]
+ROM = [3]
 # only can configure on the  "Light_sleep" mode !
 HWVAD0 =[1000]
 HWVAD1= [1]
