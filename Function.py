@@ -312,10 +312,17 @@ def set_bit(addr,bits_set_hex):
 
 # MEM_BIST = function run the BIST test 
 #################################
-def MEM_BIST(test_name,write_val,status_reg,result_val,LDO):
-    voltage="1V"
+def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
+    
+    voltage=Voltage
+    #voltage="1V"
     #voltage="1.1V"
     #voltage="1.21V"
+    
+    temperature=Temperature
+    #temperature=-40C
+    #temperature=25C
+    #temperature=80C
     
     read_apb_reg("0300004c")
     write_apb_reg("0300004c","88025614")
@@ -398,15 +405,22 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO):
             
     #if the end-result 0 - pass, else - fail
     if end_res > 0 :
+        Add_To_File("Temperature:  ")
+        Add_To_File(temperature)
+        Add_To_File(" , Voltage:  ")    
         Add_To_File(voltage)
-        Add_To_File(' - ')
+        Add_To_File(' : ')
         Add_To_File(test_name)
         Add_To_File(': ')
         Add_To_File("fail")
         print "fail"
     else:
+
+        Add_To_File("Temperature:  ")
+        Add_To_File(temperature)
+        Add_To_File(" , Voltage:  ")    
         Add_To_File(voltage)
-        Add_To_File(' - ')
+        Add_To_File(' : ')
         Add_To_File(test_name)
         Add_To_File(': ')
         Add_To_File("pass")
@@ -484,6 +498,7 @@ def System_Clock_PLL (freq):
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File("\n\n")
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
@@ -508,6 +523,7 @@ def System_Clock_PLL (freq):
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File("\n\n")
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
@@ -531,6 +547,7 @@ def System_Clock_PLL (freq):
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File("\n\n")
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
@@ -554,6 +571,7 @@ def System_Clock_PLL (freq):
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File("\n\n")
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
@@ -577,6 +595,7 @@ def System_Clock_PLL (freq):
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File("\n\n")
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
@@ -600,6 +619,7 @@ def System_Clock_PLL (freq):
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File("\n\n")
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
@@ -623,6 +643,7 @@ def System_Clock_PLL (freq):
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
+        Add_To_File("\n\n")
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
