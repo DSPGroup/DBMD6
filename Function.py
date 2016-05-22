@@ -372,6 +372,14 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
         ROM_sig_MSB_read=bin(reg).zfill(32)
         print "MSB register -bin"
         print ROM_sig_MSB_read[2:33]
+        #Add_To_File("read LSB:  ")
+        #Add_To_File(ROM_sig_LSB_read[2:33]
+        #Add_To_File("ROM LSB:  ")
+        #Add_To_File(ROM_sig_LSB)
+        #Add_To_File("read MSB:  ")
+        #Add_To_File(ROM_sig_MSB_read[2:33])
+        #Add_To_File("ROM MSB:  ")
+        #Add_To_File(ROM_sig_MSB)
         if ((ROM_sig_LSB_read[2:33]==ROM_sig_LSB)&(ROM_sig_MSB_read[2:33]==ROM_sig_MSB)):
             end_res=1
         else:
@@ -384,23 +392,31 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
     binReg=bin(reg).zfill(32)
     print "status register -bin"
     print binReg[2:33]
+    #Add_To_File("status register -bin:  ")
+    #Add_To_File(binReg)
     
     #show wanted result comparator in Binary 32bit
     result=int(result_val,16)
     print "comparator - bin"
+    res=bin(result).zfill(32)
     print bin(result).zfill(32)
+    #Add_To_File("comparator -bin:  ")
+    #Add_To_File(res)
     
     #show the result of comparison in Binary 32bit
     end_res=0
     end_res=reg & result
     print "end result after comparing"
+    end=bin(end_res).zfill(32)
     print bin(end_res).zfill(32)        
-            
+    #Add_To_File("end result after comparing -bin:  ")
+    #Add_To_File(end)            
+
     #if the end-result 0 - pass, else - fail
     if end_res > 0 :
-        Add_To_File("Temperature -")
+        Add_To_File("Temperature :")
         Add_To_File(temperature)
-        Add_To_File(", Voltage -")
+        Add_To_File(", Voltage :")
         Add_To_File(voltage)
         Add_To_File(' \n\n ')
         Add_To_File(test_name)
@@ -409,9 +425,9 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
         Add_To_File(' \n\n ')
         print "fail"
     else:
-        Add_To_File("Temperature -")
+        Add_To_File("Temperature :")
         Add_To_File(temperature)
-        Add_To_File(", Voltage -")
+        Add_To_File(", Voltage :")
         Add_To_File(voltage)
         Add_To_File(' \n\n ')
         Add_To_File(test_name)
