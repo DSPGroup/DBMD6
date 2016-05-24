@@ -413,6 +413,7 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
         Add_To_File(test_name)
         Add_To_File(': ')
         Add_To_File("fail")
+        Add_To_File("\n\n")
         print "fail"
     else:
 
@@ -424,6 +425,7 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
         Add_To_File(test_name)
         Add_To_File(': ')
         Add_To_File("pass")
+        Add_To_File("\n\n")
         print "pass"
 
 
@@ -456,28 +458,53 @@ def Clock_Out (clock_source):
                 # set clock out ,reg TEST_MODES_CTRL1
                 write_apb_reg("030000ec","2180")
                 time.sleep(1)
+                
+#########################################################################################################################################################
+# change the oscillator frequency for D4 - D6
+########################################################################### 
     
-
+def System_OSC_freq(freq):
+    if freq == "32":
+        Add_To_File("\n\n Switch to OSC , OSC freq = 32M \n\n")
+        print "\n\n Switch to OSC , OSC freq = 32M \n\n"
+        read_apb_reg ("3000084")
+        print "\n\n set OSC to 32M \n\n"
+        write_apb_reg("03000084","800323E8")
+        time.sleep(2)
+        read_apb_reg ("3000008")
+        print "\n\n Move the system to OSC 32M \n\n"
+        write_apb_reg("03000008","8000000")
+        time.sleep(2)
+        print "\n\n Change the COM Baudrate to 504123 \n\n"
+        SerialConfig_1(COM , 504123)
+        time.sleep(2)
+        read_apb_reg ("3000084")
+        print "\n\n System successfully moved to 32M OSC!!! \n\n"
+    elif freq == "92":
+        Add_To_File("\n\n Switch to OSC , OSC freq = 92M \n\n")
+        print "\n\n Switch to OSC , OSC freq = 92M \n\n"
+        read_apb_reg ("3000084")
+        print "\n\n set OSC to 92M \n\n"
+        write_apb_reg("03000084","80032b02")
+        time.sleep(2)
+        read_apb_reg ("3000008")
+        print "\n\n Move the system to OSC 92M \n\n"
+        write_apb_reg("03000008","8000000")
+        time.sleep(2)
+        print "\n\n Change the COM Baudrate to 1418345 \n\n"
+        SerialConfig_1(COM , 1418345)
+        time.sleep(2)
+        read_apb_reg ("3000084")
+        print "\n\n System successfully moved to 92M OSC!!! \n\n"
+    else:
+        print "wrong oscillator frequency entered"
+        
 #########################################################################################################################################################
 # change the PLL system clock for D4 - D6
 #################################
 
-def System_Clock_PLL (freq):
-    Add_To_File("\n\n Switch to OSC , OSC freq = 92M \n\n")
-    print "\n\n Switch to OSC , OSC freq = 92M \n\n"
-    read_apb_reg ("3000084")
-    print "\n\n set OSC to 92M \n\n"
-    write_apb_reg("03000084","80032b02")
-    time.sleep(2)
-    read_apb_reg ("3000008")
-    print "\n\n Move the system to OSC 92M \n\n"
-    write_apb_reg("03000008","8000000")
-    time.sleep(2)
-    print "\n\n Change the COM Baudrate to 1418345 \n\n"
-    SerialConfig_1(COM , 1418345)
-    time.sleep(2)
-    read_apb_reg ("3000084")
-    print "\n\n System successfully moved to OSC!!! \n\n"
+def System_Clock_PLL (freq ,OSC_Freq ):
+    System_OSC_freq("OSC_Freq")
     ##################################
     if freq == "25": #25,1986MHz
         print "\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
@@ -502,9 +529,9 @@ def System_Clock_PLL (freq):
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
+        Add_To_File("\n\n")
     ##################################
-    ##################################
-    if freq == "32": #32.768MHz
+    elif freq == "32": #32.768MHz
         print "\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
         Add_To_File("Start to Configure the System_Clock_PLL to = ")
         Add_To_File(freq)
@@ -527,6 +554,7 @@ def System_Clock_PLL (freq):
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
+        Add_To_File("\n\n")
     ##################################
     elif freq == "49": #49.152MHz
         print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
@@ -551,6 +579,7 @@ def System_Clock_PLL (freq):
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
+        Add_To_File("\n\n")
         ##################################
     elif freq == "73": #73.728Mhz
         print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
@@ -575,6 +604,7 @@ def System_Clock_PLL (freq):
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
+        Add_To_File("\n\n")
         ##################################
     elif freq == "82": # 82,247,680 hz
         print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
@@ -599,6 +629,7 @@ def System_Clock_PLL (freq):
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
+        Add_To_File("\n\n")
         ##################################
     elif freq == "92": #49.152MHz
         print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
@@ -623,6 +654,7 @@ def System_Clock_PLL (freq):
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
+        Add_To_File("\n\n")
         ##################################
     elif freq == "98": #98.304Mhz
         print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
@@ -647,6 +679,7 @@ def System_Clock_PLL (freq):
         Add_To_File(" configure System_Clock_PLL to ")
         Add_To_File(freq)
         Add_To_File("MHz Completed !!!\n\n")
+        Add_To_File("\n\n")
         ##################################
     else :
         print "Error no legal freq selected"
