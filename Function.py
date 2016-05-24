@@ -464,7 +464,7 @@ def Clock_Out (clock_source):
 ########################################################################### 
     
 def System_OSC_freq(freq):
-    if freq == "32":
+    if freq== "32":
         Add_To_File("\n\n Switch to OSC , OSC freq = 32M \n\n")
         print "\n\n Switch to OSC , OSC freq = 32M \n\n"
         read_apb_reg ("3000084")
@@ -480,7 +480,8 @@ def System_OSC_freq(freq):
         time.sleep(2)
         read_apb_reg ("3000084")
         print "\n\n System successfully moved to 32M OSC!!! \n\n"
-    elif freq == "92":
+        Add_To_File("\n\n System successfully moved to 32M OSC!!! \n\n")
+    elif freq =="92":
         Add_To_File("\n\n Switch to OSC , OSC freq = 92M \n\n")
         print "\n\n Switch to OSC , OSC freq = 92M \n\n"
         read_apb_reg ("3000084")
@@ -496,15 +497,17 @@ def System_OSC_freq(freq):
         time.sleep(2)
         read_apb_reg ("3000084")
         print "\n\n System successfully moved to 92M OSC!!! \n\n"
+        Add_To_File("\n\n System successfully moved to 92M OSC!!! \n\n")
     else:
         print "wrong oscillator frequency entered"
+        Add_To_File("wrong oscillator frequency entered")
         
 #########################################################################################################################################################
 # change the PLL system clock for D4 - D6
 #################################
 
 def System_Clock_PLL (freq ,OSC_Freq ):
-    System_OSC_freq("OSC_Freq")
+    System_OSC_freq(OSC_Freq)
     ##################################
     if freq == "25": #25,1986MHz
         print "\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
