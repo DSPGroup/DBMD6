@@ -22,7 +22,7 @@ TIME_SERIAL = 1
 #########################################
 #####     Hen Create Folder
 #########################################
-Path_Folder = r'C:\Users\henl\Documents\D6\PROJ\DBMD6'
+Path_Folder = r'C:\Users\henl\Documents\D6\BIST_test_results'
 
 #########################################
 #####     Eran Create Folder
