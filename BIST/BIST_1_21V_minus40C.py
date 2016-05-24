@@ -36,7 +36,18 @@ Clock_Out ("Global")
 Voltage="1.21V"
 Temperature="-40"
 
-System_Clock_PLL ("49")
+System_Clock_PLL ("25","32")
+MEM_BIST("PRAM012","103c0","030000D4","3c0","0",Voltage,Temperature)
+MEM_BIST("PRAM34","e0080","030000D4","3f","0",Voltage,Temperature)
+MEM_BIST("DTCM2","2010","030000D0","1e00","0",Voltage,Temperature)
+MEM_BIST("DTCM1","1008","030000D0","1e0","0",Voltage,Temperature)
+#MEM_BIST("DTCM0","804","030000D0","1e","0","1.1V","-40",Voltage,Temperature)
+MEM_BIST("PTCM","c020","030000D0","1fe000","0",Voltage,Temperature)
+MEM_BIST("CACHE","10040","030000D4","fc00","0",Voltage,Temperature)
+MEM_BIST("HWVAD","201","030000D0","0001","0",Voltage,Temperature)
+MEM_BIST("ROM","402","0","0","0",Voltage,Temperature)
+
+System_Clock_PLL ("49","32")
 MEM_BIST("PRAM012","103c0","030000D4","3c0","0",Voltage,Temperature)
 MEM_BIST("PRAM34","e0080","030000D4","3f","0",Voltage,Temperature)
 MEM_BIST("DTCM2","2010","030000D0","1e00","0",Voltage,Temperature)
@@ -49,7 +60,7 @@ MEM_BIST("ROM","402","0","0","0",Voltage,Temperature)
 
 #System_Clock_PLL ("32")
 
-System_Clock_PLL ("73")
+System_Clock_PLL ("73","32")
 MEM_BIST("PRAM012","103c0","030000D4","3c0","0",Voltage,Temperature)
 MEM_BIST("PRAM34","e0080","030000D4","3f","0",Voltage,Temperature)
 MEM_BIST("DTCM2","2010","030000D0","1e00","0",Voltage,Temperature)
@@ -60,7 +71,7 @@ MEM_BIST("CACHE","10040","030000D4","fc00","0",Voltage,Temperature)
 MEM_BIST("HWVAD","201","030000D0","0001","0",Voltage,Temperature)
 MEM_BIST("ROM","402","0","0","0",Voltage,Temperature)
 
-System_Clock_PLL ("82")
+System_Clock_PLL ("82","32")
 MEM_BIST("PRAM012","103c0","030000D4","3c0","0",Voltage,Temperature)
 MEM_BIST("PRAM34","e0080","030000D4","3f","0",Voltage,Temperature)
 MEM_BIST("DTCM2","2010","030000D0","1e00","0",Voltage,Temperature)
@@ -73,7 +84,7 @@ MEM_BIST("ROM","402","0","0","0",Voltage,Temperature)
 
 #System_Clock_PLL ("92")
 
-System_Clock_PLL ("98")
+System_Clock_PLL ("98","32")
 MEM_BIST("PRAM012","103c0","030000D4","3c0","0",Voltage,Temperature)
 MEM_BIST("PRAM34","e0080","030000D4","3f","0",Voltage,Temperature)
 MEM_BIST("DTCM2","2010","030000D0","1e00","0",Voltage,Temperature)
