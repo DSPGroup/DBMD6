@@ -522,18 +522,12 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         write_apb_reg("3000000", "40000400")
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         print "\nChange the COM Baudrate to 387670\n"
         SerialConfig_1(COM , 387670)
-=======
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
->>>>>>> Stashed changes
-=======
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
->>>>>>> Stashed changes
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
