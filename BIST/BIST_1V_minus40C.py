@@ -71,7 +71,7 @@ MEM_BIST("CACHE","10040","030000D4","fc00","0",Voltage,Temperature)
 MEM_BIST("HWVAD","201","030000D0","0001","0",Voltage,Temperature)
 MEM_BIST("ROM","402","0","0","0",Voltage,Temperature)
 
-System_Clock_PLL ("82","92")
+System_Clock_PLL ("82","32")
 MEM_BIST("PRAM012","103c0","030000D4","3c0","0",Voltage,Temperature)
 MEM_BIST("PRAM34","e0080","030000D4","3f","0",Voltage,Temperature)
 MEM_BIST("DTCM2","2010","030000D0","1e00","0",Voltage,Temperature)
@@ -84,7 +84,7 @@ MEM_BIST("ROM","402","0","0","0",Voltage,Temperature)
 
 #System_Clock_PLL ("92")
 
-System_Clock_PLL ("98","92")
+System_Clock_PLL ("98","32")
 MEM_BIST("PRAM012","103c0","030000D4","3c0","0",Voltage,Temperature)
 MEM_BIST("PRAM34","e0080","030000D4","3f","0",Voltage,Temperature)
 MEM_BIST("DTCM2","2010","030000D0","1e00","0",Voltage,Temperature)

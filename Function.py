@@ -523,7 +523,7 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-        print "\nChange the COM Baudrate to 504123\n"
+        print "\nChange the COM Baudrate to 387670\n"
         SerialConfig_1(COM , 387670)
         time.sleep(2)
         read_apb_reg ("3000004")
