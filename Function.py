@@ -436,16 +436,7 @@ def Clock_Out (clock_source):
     print ("/n/n selected clock source out on GPIO4 = " , clock_source, "\n\n")
     # set GPIO4 to clock P function , reg IOM1
     write_apb_reg ("0300004c","88025215")
-    # set GPIO4 to clock P function , reg IOM1
-    write_apb_reg ("030000ec","2100")
     time.sleep(1)
-    # we have bug hear 
-    # set GPIO4 to clock P function , reg IOM1
-    #set_bit ("0300001c", "10")
-    #time.sleep(0.5)
-    # set GPIO4 to correct direction , reg GP_DIR_OUT
-    #set_bit("03000010", "10")
-    #time.sleep(0.5)
     if  clock_source == "PLL":
             # set clock out ,reg TEST_MODES_CTRL1
             write_apb_reg("030000ec","2140")
@@ -473,10 +464,11 @@ def System_OSC_freq(freq):
         time.sleep(2)
         read_apb_reg ("3000008")
         print "\n\n Move the system to OSC 32M \n\n"
-        write_apb_reg("03000008","8000000")
+        write_apb_reg("03000008","08000000")
         time.sleep(2)
-        print "\n\n Change the COM Baudrate to 504123 \n\n"
-        SerialConfig_1(COM , 504123)
+        print "\n\n Change the COM Baudrate to" ,BaudRateCalculation (Integer,Frac,32768000.0)
+        print "\n\n" 
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,32768000.0))
         time.sleep(2)
         read_apb_reg ("3000084")
         print "\n\n System successfully moved to 32M OSC!!! \n\n"
@@ -492,8 +484,8 @@ def System_OSC_freq(freq):
         print "\n\n Move the system to OSC 92M \n\n"
         write_apb_reg("03000008","8000000")
         time.sleep(2)
-        print "\n\n Change the COM Baudrate to 1418345 \n\n"
-        SerialConfig_1(COM , 1418345)
+        print "\n\n Change the COM Baudrate to" , BaudRateCalculation (Integer,Frac,92340224.0)
+        SerialConfig_1(COM ,  BaudRateCalculation (Integer,Frac,92340224.0))
         time.sleep(2)
         read_apb_reg ("3000084")
         print "\n\n System successfully moved to 92M OSC!!! \n\n"
@@ -506,7 +498,7 @@ def System_OSC_freq(freq):
 # change the PLL system clock for D4 - D6
 #################################
 
-def System_Clock_PLL (freq ,OSC_Freq ):
+def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
     System_OSC_freq(OSC_Freq)
     ##################################
     if freq == "25": #25,1986MHz
@@ -515,16 +507,33 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         Add_To_File(freq)
         Add_To_File("\n\n")
         # change the PLL  div reg
-        write_apb_reg("3000004", "0030100") 
+        write_apb_reg("3000004", "30000000") 
+        write_apb_reg("3000004", "30030100")
         time.sleep(2)
         # change the PLL  BWAJ
-        write_apb_reg("3000000", "1180")
-        time.sleep(2)
+        if chip_type == "D4" :
+            write_apb_reg("3000000", "1180")
+            time.sleep(2)
+        else :
+            write_apb_reg("3000000", "4000000")
+            write_apb_reg("3000004", "20030100")
+
         print "\n Return the system to PLL \n"
+        write_apb_reg("3000000", "40000400")
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         print "\nChange the COM Baudrate to 387670\n"
         SerialConfig_1(COM , 387670)
+=======
+        print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
+>>>>>>> Stashed changes
+=======
+        print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
+>>>>>>> Stashed changes
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
@@ -535,21 +544,26 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         Add_To_File("\n\n")
     ##################################
     elif freq == "32": #32.768MHz
-        print "\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
+        print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
         Add_To_File("Start to Configure the System_Clock_PLL to = ")
         Add_To_File(freq)
         Add_To_File("\n\n")
         # change the PLL  div reg
-        write_apb_reg("3000004", "003e700") 
+        write_apb_reg("3000004", "30000000") 
+        write_apb_reg("3000004", "3003e700") 
         time.sleep(2)
         # change the PLL  BWAJ
-        write_apb_reg("3000000", "11f3")
+        if chip_type == "D4" :
+            write_apb_reg("3000000", "11f3")
+        else :
+            write_apb_reg("3000000", "40000400")
+            write_apb_reg("3000004", "2003e700")
         time.sleep(2)
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-        print "\nChange the COM Baudrate to 504123\n"
-        SerialConfig_1(COM , 504123)
+        print "\nChange the COM Baudrate to " ,BaudRateCalculation (Integer,Frac,32768000.0)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,32768000.0))
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
@@ -565,16 +579,21 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         Add_To_File(freq)
         Add_To_File("\n\n")
         # change the PLL  div reg
-        write_apb_reg("3000004", "005db00") 
+        write_apb_reg("3000004", "30000000") 
+        write_apb_reg("3000004", "3005db00") 
         time.sleep(2)
         # change the PLL  BWAJ
-        write_apb_reg("3000000", "12ed")
+        if chip_type == "D4" :
+            write_apb_reg("3000000", "12ed")
+        else :
+            write_apb_reg("3000000", "40000400")
+            write_apb_reg("3000004", "2005db00")
         time.sleep(2)
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-        print "\nChange the COM Baudrate to 756184 \n"
-        SerialConfig_1(COM , 756184)
+        print "\nChange the COM Baudrate to " ,BaudRateCalculation (Integer,Frac,49152000.0)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,49152000.0))
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
@@ -590,16 +609,21 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         Add_To_File(freq)
         Add_To_File("\n\n")
         # change the PLL  div reg
-        write_apb_reg("3000004", "008c900") 
+        write_apb_reg("3000004", "30000000") 
+        write_apb_reg("3000004", "3008c900") 
         time.sleep(2)
         # change the PLL  BWAJ
-        write_apb_reg("3000000", "1464")
-        time.sleep(2)
+        if chip_type == "D4" :
+            write_apb_reg("3000000", "1464")
+            time.sleep(2)
+        else:
+            write_apb_reg("3000000", "40000400")
+            write_apb_reg("3000004", "2008c900")
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-        print "\nChange the COM Baudrate to 1134276 \n"
-        SerialConfig_1(COM , 1134276)
+        print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,73728000.0)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,73728000.0))
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
@@ -615,16 +639,21 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         Add_To_File(freq)
         Add_To_File("\n\n")
         # change the PLL  div reg
-        write_apb_reg("3000004", "009cd00") 
+        write_apb_reg("3000004", "30000000") 
+        write_apb_reg("3000004", "3009cd00") 
         time.sleep(2)
         # change the PLL  BWAJ
-        write_apb_reg("3000000", "14e6")
-        time.sleep(2)
+        if chip_type == "D4" :
+            write_apb_reg("3000000", "14e6")
+            time.sleep(2)
+        else :
+            write_apb_reg("3000000", "40000400")
+            write_apb_reg("3000004", "2009cd00")
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-        print "\nChange the COM Baudrate to 1265348 \n"
-        SerialConfig_1(COM , 1265348)
+        print "\nChange the COM Baudrate to " , BaudRateCalculation (Integer,Frac,82247680.0)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,82247680.0))
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
@@ -634,22 +663,27 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         Add_To_File("MHz Completed !!!\n\n")
         Add_To_File("\n\n")
         ##################################
-    elif freq == "92": #49.152MHz
+    elif freq == "92": #91979776MHz
         print"\n\n start to configure the System_Clock_PLL to " ,freq ,"MHz\n\n"
         Add_To_File("Start to Configure the System_Clock_PLL to = ")
         Add_To_File(freq)
         Add_To_File("\n\n")
         # change the PLL  div reg
-        write_apb_reg("3000004", "00af600") 
+        write_apb_reg("3000004", "30000000") 
+        write_apb_reg("3000004", "300af600") 
         time.sleep(2)
         # change the PLL  BWAJ
-        write_apb_reg("3000000", "157b")
-        time.sleep(2)
+        if chip_type == "D4" :
+            write_apb_reg("3000000", "157b")
+            time.sleep(2)
+        else :
+            write_apb_reg("3000000", "40000400")
+            write_apb_reg("3000004", "200af600")   
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-        print "\nChange the COM Baudrate to 1415384 \n"
-        SerialConfig_1(COM , 1415384)
+        print "\nChange the COM Baudrate to " , BaudRateCalculation (Integer,Frac,91979776)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,91979776))
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
@@ -665,16 +699,21 @@ def System_Clock_PLL (freq ,OSC_Freq ):
         Add_To_File(freq)
         Add_To_File("\n\n")
         # change the PLL  div reg
-        write_apb_reg("3000004", "00bb700") 
+        write_apb_reg("3000004", "30000000") 
+        write_apb_reg("3000004", "300bb700") 
         time.sleep(2)
         # change the PLL  BWAJ
-        write_apb_reg("3000000", "15db")
-        time.sleep(2)
+        if chip_type == "D4" :
+            write_apb_reg("3000000", "15db")
+            time.sleep(2)
+        else :
+            write_apb_reg("3000000", "40000400")
+            write_apb_reg("3000004", "200bb700")   
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
         time.sleep(2)
-        print "\nChange the COM Baudrate to 1512369 \n"
-        SerialConfig_1(COM , 1512369)
+        print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,98304000.0)
+        SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,98304000.0))
         time.sleep(2)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
@@ -792,6 +831,12 @@ def  Memory_Block_Select (memory_name , memory_section , mode):
         print ""
         print "set bit for " , memory_name , memory_name[memory_section] , ", on section = ", memory_section , ", power mode = " , mode
         print ""          
+def BaudRateCalculation(Integer,Frac ,APB_Clock):
+    
+    buad_rate = (1.0/16.0*(APB_Clock/(Integer+Frac/16)))
+    return int (buad_rate)
+
+    
 
 
 
