@@ -340,8 +340,8 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
     #configure LDO supply
     #input voltage (VCC) is 1.1V 
     if LDO=="0.9":
-        set_bit("0300003c","000f")  #LC=15, LDO level in VDD =15
-        set_bit("0300003c","0010")  #LDO enable 
+        set_bit("0300003c","0008")  #LC=15, LDO level in VDD =15
+        set_bit("0300003c","0070")  #LDO enable 
     elif LDO=="bypass":
         set_bit("03000044","1")     #enable weak pull
         clear_bit("0300003c","0010")#LDO disable 
