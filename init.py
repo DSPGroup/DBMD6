@@ -23,11 +23,11 @@ import binascii
 ##########################################################
 #Hen File Configuration
 ##########################################################
-#execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Init_Configuration.py")
-#execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Function.py")
+execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Init_Configuration.py")
+execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Function.py")
 
 ##########################################################
 #Eran File Configuration
 ##########################################################
-execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Init_Configuration.py")
-execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Function.py")
+#execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Init_Configuration.py")
+#execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Function.py")
