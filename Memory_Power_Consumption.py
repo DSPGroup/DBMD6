@@ -1,7 +1,7 @@
 ##########################
 #Script identification Main Script
 ##########################
-#Author : HEN LANGE
+#Author : Eran.S
 #Start Date : 13-3-2016
 #Script change By : xxxx
 
@@ -26,30 +26,30 @@ Open_log(Log_Name)
 Sync ()
 checkSum()
 
-read_apb_reg ("3000000")
+#read_apb_reg ("3000000")
 #Clock_Out ("Global")
-time.sleep(3)
-
-#x = BaudRateCalculation (Integer,Frac,25198600.0)
-#print "x = ",x
-
+#time.sleep(1)
+#System_Clock_PLL ("32" ,"32","D6")
+#read_apb_reg ("3000084")
+#read_apb_reg("030000cc")
+#time.sleep(2)
+write_apb_reg("030000cc","10040")
 read_apb_reg ("3000084")
-#System_OSC_freq("32")
-Clock_Out ("OSC")
-time.sleep(5)
-Clock_Out ("Global")
-System_Clock_PLL ("73" ,"32","D6")
-Clock_Out ("Global")
-read_apb_reg ("3000084")
-#System_Clock_PLL ("98")
+read_apb_reg("030000D4")
+
 #Can Select the following memory name :
-  #PTCM = 0 to 7
-  #DTCM = 0 to 9
-  #TAG = 0 to 1
-  #CACHE = 0 to 3
-  #PAHB = 0 to 9
+#PTCM = 0 to 7
+#DTCM = 0 to 9
+#TAG = 0 to 1
+#CACHE = 0 to 3
+#PAHB = 0 to 9
 # shut_down , deep_sleep , light_sleep
+#All_Memory_Power_Mode ("light_sleep" ,1)
+#time.sleep(7)
+#All_Memory_Power_Mode ("deep_sleep" ,1)
+#time.sleep(7)
 #All_Memory_Power_Mode ("shut_down" ,1)
+#time.sleep(7)
 #time.sleep(5)
 #read_apb_reg (MEM_PWR_MD_SD1)
 #Memory_Block_Select (PTCM , 7 , "shut_down")

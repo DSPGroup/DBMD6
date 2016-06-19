@@ -509,11 +509,11 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "30030100")
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "1180")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "4000000")
             write_apb_reg("3000004", "20030100")
@@ -521,14 +521,14 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         print "\n Return the system to PLL \n"
         write_apb_reg("3000000", "40000400")
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to 387670\n"
         SerialConfig_1(COM , 387670)
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -545,20 +545,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3003e700") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "11f3")
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2003e700")
-        time.sleep(2)
+        time.sleep(1)
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " ,BaudRateCalculation (Integer,Frac,32768000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,32768000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -575,20 +575,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3005db00") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "12ed")
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2005db00")
-        time.sleep(2)
+        time.sleep(1)
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " ,BaudRateCalculation (Integer,Frac,49152000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,49152000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -605,20 +605,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3008c900") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "1464")
-            time.sleep(2)
+            time.sleep(1)
         else:
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2008c900")
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,73728000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,73728000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -635,20 +635,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3009cd00") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "14e6")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2009cd00")
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " , BaudRateCalculation (Integer,Frac,82247680.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,82247680.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -665,20 +665,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "300af600") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "157b")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "200af600")   
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " , BaudRateCalculation (Integer,Frac,91979776)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,91979776))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -695,20 +695,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "300bb700") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "15db")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "200bb700")   
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,98304000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,98304000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -724,53 +724,61 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
 def All_Memory_Power_Mode (power_mode, on_off):
     if (power_mode == "light_sleep" ):
         #need to verify clear bit of the following modes := deep_sleep and  shut_down
+        print" "
         print"clear the bits of deep_sleep"
+        print" "
         clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS2,"ffe")
         print"clear the bits of shut_down"
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
         if (on_off == 1):
-            #set the light_sleep mode
-            set_bit (MEM_PWR_MD_LS1,"3ffffff")
+            print" "
+            print "all the following block enter to light_sleep"
+            print " "
+            print "MEM_PWR_MD_LS1 continue  the following PTCM7-0_LS_EN , DTCM11-0_LS_EN , TAG1-0_LS_EN , CACHE3-0_LS_EN"
             set_bit (MEM_PWR_MD_LS2,"1fff")
-            print"all the following block enter to light_sleep"
-            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+            # not include CHACHE 0&1 , DTCM 0,1,2,3
+            set_bit (MEM_PWR_MD_LS1,"3FFfc3c")
         else :
-            clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+            clear_bit (MEM_PWR_MD_LS1,"3FFFFFF")
             clear_bit (MEM_PWR_MD_LS2,"1fff")
         
     elif (power_mode == "deep_sleep" ):
-        #need to verify clear bit of the following modes := light_sleep and  shut_down
         print ""
         print "clear the bits of deep_sleep"
         print ""
+        clear_bit (MEM_PWR_MD_LS2,"7fe")
         clear_bit (MEM_PWR_MD_LS1,"3ffffff")
-        clear_bit (MEM_PWR_MD_LS2,"1fff")
+
         print ""
         print"clear the bits of shut_down"
         print ""
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
-        clear_bit (MEM_PWR_MD_DS1,"ffe")
+        clear_bit (MEM_PWR_MD_SD2,"7fe")
         if (on_off == 1):
             #set the deep_sleep mode
-            set_bit (MEM_PWR_MD_DS1,"3ffffff")
-            set_bit (MEM_PWR_MD_DS1,"ffe")
+            print""
+            print "set the deep_sleep mode MEM_PWR_MD_DS2 =" ,MEM_PWR_MD_DS1 , "7fe"
             print ""
-            print"all the following block enter to deep_sleep \n\n"
-            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , PAHB0 "
+            set_bit (MEM_PWR_MD_DS2,"7fe")
+            
+            set_bit (MEM_PWR_MD_DS1,"3FFfc3c")
+
             print ""
         else :
             print ""
             print"SET Momory in Active Mode"
             print ""
             clear_bit (MEM_PWR_MD_DS1,"3ffffff")
-            clear_bit (MEM_PWR_MD_DS1,"ffe")
+            clear_bit (MEM_PWR_MD_DS2,"7fe")
         
     elif (power_mode == "shut_down" ):
         if (on_off == 1):
-            set_bit (MEM_PWR_MD_SD1,"3ffffff")
-            set_bit (MEM_PWR_MD_DS1,"ffe")
+            set_bit (MEM_PWR_MD_SD2,"7fe")
+            read_apb_reg ("3000084")
+            set_bit (MEM_PWR_MD_SD1,"3FFfc3c")
+            read_apb_reg ("3000084")
             print ""
             print"all the following block enter to shut_down \n\n"
             print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
@@ -780,7 +788,7 @@ def All_Memory_Power_Mode (power_mode, on_off):
             print"SET Memory in Active Mode"
             print ""
             clear_bit (MEM_PWR_MD_DS1,"3ffffff")
-            clear_bit (MEM_PWR_MD_DS1,"ffe")
+            clear_bit (MEM_PWR_MD_DS1,"7fe")
             print ""
             print"clear the bits of deep_sleep"
             print ""
