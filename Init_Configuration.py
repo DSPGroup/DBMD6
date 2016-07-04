@@ -26,7 +26,7 @@ chip_type = "D6"
 #########################################
 #####     Uart Basic Configuration
 #########################################
-COM = 'COM6'
+COM = 'COM11'
 BAUD_RATE = 921600
 BYTE_SIZE = 8
 PARIT = 'N'
@@ -39,12 +39,12 @@ Frac =11.0
 #########################################
 #####     Hen Create Folder
 #########################################
-#Path_Folder = r'C:\Users\henl\Documents\D6\BIST_test_results'
+Path_Folder = r'C:\Users\henl\Documents\D6\BIST_test_results'
 
 #########################################
 #####     Eran Create Folder
 #########################################
-Path_Folder = r'C:\tmp\Python\\'
+#Path_Folder = r'C:\tmp\Python\\'
 
 Folder_Name = "Test Result"
 Folder_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
