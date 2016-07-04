@@ -170,7 +170,6 @@ def checkSum():
     ReadSerial = ser.read(8)
     time.sleep(0.1)
     
-    
     ser.flushInput()
     time.sleep(0.5)
     
@@ -213,7 +212,6 @@ def Open_log(Log_Name):
 #################################
 
 def Add_To_File(Add_Line):
-    
     f = open(Current_File_Name, 'a')
     f.write(Add_Line)
     #f.write("\n")
@@ -734,12 +732,10 @@ def All_Memory_Power_Mode (power_mode, on_off):
         clear_bit (MEM_PWR_MD_DS1,"ffe")
         if (on_off == 1):
             print" "
-            print "all the following block enter to light_sleep"
-            print " "
-            print "MEM_PWR_MD_LS1 continue  the following PTCM7-0_LS_EN , DTCM11-0_LS_EN , TAG1-0_LS_EN , CACHE3-0_LS_EN"
-            set_bit (MEM_PWR_MD_LS2,"1fff")
+            print "\n\n######################\n\nAll the following block enter to light_sleep\n\n######################\n\n"
+            set_bit (MEM_PWR_MD_LS2,"1FFF")
             # not include CHACHE 0&1 , DTCM 0,1,2,3
-            set_bit (MEM_PWR_MD_LS1,"3FFfc3c")
+            set_bit (MEM_PWR_MD_LS1,"3FFFC3C")
         else :
             clear_bit (MEM_PWR_MD_LS1,"3FFFFFF")
             clear_bit (MEM_PWR_MD_LS2,"1fff")
@@ -750,7 +746,6 @@ def All_Memory_Power_Mode (power_mode, on_off):
         print ""
         clear_bit (MEM_PWR_MD_LS2,"7fe")
         clear_bit (MEM_PWR_MD_LS1,"3ffffff")
-
         print ""
         print"clear the bits of shut_down"
         print ""
@@ -762,24 +757,18 @@ def All_Memory_Power_Mode (power_mode, on_off):
             print "set the deep_sleep mode MEM_PWR_MD_DS2 =" ,MEM_PWR_MD_DS1 , "7fe"
             print ""
             set_bit (MEM_PWR_MD_DS2,"7fe")
-            
             set_bit (MEM_PWR_MD_DS1,"3FFfc3c")
-
-            print ""
+            print "\n\n######################\n\nAll the following block enter to DEEP_SLEEP\n\n######################\n\n"
         else :
             print ""
-            print"SET Momory in Active Mode"
             print ""
             clear_bit (MEM_PWR_MD_DS1,"3ffffff")
             clear_bit (MEM_PWR_MD_DS2,"7fe")
-        
     elif (power_mode == "shut_down" ):
         if (on_off == 1):
             set_bit (MEM_PWR_MD_SD2,"7fe")
-            read_apb_reg ("3000084")
             set_bit (MEM_PWR_MD_SD1,"3FFfc3c")
-            read_apb_reg ("3000084")
-            print ""
+            print "" 
             print"all the following block enter to shut_down \n\n"
             print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
             print ""
@@ -838,17 +827,197 @@ def BaudRateCalculation(Integer,Frac ,APB_Clock):
     buad_rate = (1.0/16.0*(APB_Clock/(Integer+Frac/16)))
     return int (buad_rate)
 
-    
 
+def load_file(file_name, unsent_bytes,flag):
+    infile = open(file_name,"rb")
+    list_file = list(infile.read())
+    list_file = [i for i in list_file]
+    #wakeup()
+    j=0
+    if (flag ==1):
+        print "start to send the file ......"
+        while (j < len(list_file) - unsent_bytes):
+            ser.write(str(list_file[j]))
+            j = j + 1
+            print "........",
+            #time.sleep(0.05)
+        
+    # # verify boot succeeded
+    #     ser.write(chr(0x5A))
+    #     ser.write(chr(0x0B))
+    #     time.sleep(1)
+    #     ser.flushInput()
+    #     ser.write("019r")	
+    #     version = ser.read(5)
+    #     print "vertion = ",version
+    #     # #print ("Chip Type = " + str(version)[:4])
+    #     print "Chip Type = " + str(version)[:4]
+    #     # time.sleep(0.1)
+    #     if (version[:3] == 'dbd'):
+    #         Boot_Complete=1
+    #         print "Boot Succeeded"
+    #     print "Boot Failed"
+    print "file send completed"
+    print "file load successful"
+def exeBootFile():
+    ser.write(chr(0x5A))
+    ser.write(chr(0x0B))
 
+def FW_init():
+		#disable_statistic()
+		FW_write_register_short("29","0001")
+		FW_write_register_short("22","0040")
+		FW_write_register_short("23","6023")
+#		time.sleep (5)
+		FW_write_register_short("10","9015")
+		FW_write_register_short("15","8e8e")
+		FW_write_register_short("24","f043")
+		pre_load_trigger_model("2_HBG_v332.bin")
+		load_trigger_model ("2_HBG_v332.bin")
+		FW_write_register("17","8")
+		FW_write_register("01","0001")
+		print("Init ended")
 
+def FW_write_register(reg_num, value):
+	global write_in_progress
+	ser.flushInput()
+	while (1):
+		if (write_in_progress == False):
+			write_in_progress = True
+			#wakeup()
+			value = str(value)
+			if (value in LIST_OF_VALUES):
+				value = LIST_OF_VALUES[value]
+			value = value.zfill(4)
+			reg_num = str(reg_num)
+			reg_num = reg_num.zfill(3)
+			
+			ser.write(reg_num + "w" + value)
+			time.sleep (0.01)
+			read_register(reg_num)
 
+			write_in_progress = False
+			break
+		else:
+			print "writing in use... please wait..."
+			time.sleep(0.01)
+		
+def FW_write_register_short(reg_num, value):
+	global write_in_progress	
+	ser.flushInput()
+	while (1):
+		if (write_in_progress == False):
+			write_in_progress = True
+			#wakeup()
+			value = str(value)
+			if (value in LIST_OF_VALUES):
+				value = LIST_OF_VALUES[value]
+			value = value.zfill(4)
+			reg_num = str(reg_num)
+			reg_num = reg_num.zfill(3)
+			
+			ser.write(reg_num + "w" + value)
+			write_in_progress = False
+			break
+		else:
+			print "writing in use... please wait..."
+			time.sleep(0.01)
 
+def FW_read_register(register_num):
+	global read_in_progress	
+	ser.flushInput()
+	while (1):
+		if (read_in_progress == False):
+			read_in_progress = True
+			#wakeup()
+			register_num = str(register_num)
+			register_num = register_num.zfill(3)
+			ser.write(register_num + "r")
+			serRead = ser.read(5)[:4]
+			#print("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
+			print ("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
+			read_in_progress = False
+			break
+		else:
+			print "writing in use... please wait..."
+			time.sleep(0.01)
+		
+def FW_read_register_short(register_num):
+    global read_in_progress	
+    ser.flushInput()
+    while (1):
+        if (read_in_progress == False):
+            read_in_progress = True
+            #wakeup()
+            register_num = str(register_num)
+            register_num = register_num.zfill(3)
+            ser.write(register_num + "r")
+            serRead = ser.read(5)[:4]
+            read_in_progress = False
+            print "serRead address" , register_num , "=" , serRead
+            return serRead
+        else:
+            print "writing in use... please wait..."		
+            time.sleep(0.01)			
 
+def FW_read_register_loop(register_num):
+	i=0
+	print("reading register 0x" + str(register_num))
+	while (i<100):
+		read_register(register_num)
+		time.sleep(0.1)
+		i=i+1
+	print("done loop reading") 
 
+def FW_read_IO_port (reg_address):
+	global read_in_progress	
+	ser.flushInput()
+	while (1):
+		if (read_in_progress == False):
+			read_in_progress = True
+			reg_address = (str(reg_address)).zfill(8)		
+			address_msb = reg_address [:4]
+			address_lsb = reg_address [4:8]
+			wakeup()
+			ser.write("006w" + address_msb)
+			time.sleep (0.001)
+			ser.write("005w" + address_lsb)
+			time.sleep (0.001)
+			ser.write("007r")
+			value_lsb = ser.read(5)[:4]
+			ser.write("008r")
+			value_msb = ser.read(5)[:4]
+			print("reg: 0x" + reg_address + " ; value: 0x" + str(value_msb)+str(value_lsb))
+			read_in_progress = False
+			break
+		else:
+			print("reading in use... please wait...")			
+			time.sleep(0.01)
 
-
-
-
-
-
+def FW_write_IO_port (reg_address, reg_value):
+	global write_in_progress	
+	ser.flushInput()
+	while (1):
+		if (write_in_progress == False):
+			write_in_progress = True
+			reg_address = (str(reg_address)).zfill(8)		
+			address_msb = reg_address [:4]
+			address_lsb = reg_address [4:8]
+			reg_value = (str(reg_value)).zfill(8)		
+			value_msb = reg_value [:4]
+			value_lsb = reg_value [4:8]
+			wakeup()
+			ser.write("006w" + address_msb)
+			time.sleep (0.001)
+			ser.write("005w" + address_lsb)
+			time.sleep (0.001)
+			ser.write("007w" + value_lsb)
+			time.sleep (0.001)
+			ser.write("008w" + value_msb)
+			
+			read_IO_port (reg_address)
+			write_in_progress = False
+			break
+		else:
+			print("writing in use... please wait...")			
+			time.sleep(0.01)

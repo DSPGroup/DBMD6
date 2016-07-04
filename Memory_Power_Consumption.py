@@ -6,11 +6,6 @@
 #Script change By : xxxx
 
 ###############################
-#Hen Path File
-###############################
-#execfile ("G:\Chip_Validation\Python\Hen\infrastructure\init.py")
-
-###############################
 #Eran Path File
 ###############################
 execfile ("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\init.py")
@@ -24,7 +19,7 @@ SerialConfig_1 (COM ,BAUD_RATE)
 
 Open_log(Log_Name)
 Sync ()
-checkSum()
+#checkSum()
 
 #read_apb_reg ("3000000")
 #Clock_Out ("Global")
@@ -33,9 +28,6 @@ checkSum()
 #read_apb_reg ("3000084")
 #read_apb_reg("030000cc")
 #time.sleep(2)
-write_apb_reg("030000cc","10040")
-read_apb_reg ("3000084")
-read_apb_reg("030000D4")
 
 #Can Select the following memory name :
 #PTCM = 0 to 7
@@ -45,10 +37,11 @@ read_apb_reg("030000D4")
 #PAHB = 0 to 9
 # shut_down , deep_sleep , light_sleep
 #All_Memory_Power_Mode ("light_sleep" ,1)
-#time.sleep(7)
+#read_apb_reg("030000cc")
+time.sleep(7)
 #All_Memory_Power_Mode ("deep_sleep" ,1)
 #time.sleep(7)
-#All_Memory_Power_Mode ("shut_down" ,1)
+All_Memory_Power_Mode ("shut_down" ,1)
 #time.sleep(7)
 #time.sleep(5)
 #read_apb_reg (MEM_PWR_MD_SD1)

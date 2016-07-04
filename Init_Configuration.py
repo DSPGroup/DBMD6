@@ -5,6 +5,21 @@
 #Start Date : 13-3-2016
 #Script change By : xxxx
 
+
+#######################################################################################
+# FW Global variables setting
+#######################################################################################
+read_in_progress = False
+write_in_progress = False
+stop_streaming_flag = False
+statistic = True
+mic24 = '0000'
+mic25 = '0000'
+log_filename = ''
+LIST_OF_VALUES = {}
+
+
+
 #######################################################################################
 chip_type = "D6"
 
@@ -39,7 +54,7 @@ Dir_Name = os.path.join(Path_Folder , Folder_Name , Folder_Date)
 #####     Log
 #########################################
 
-Test_Name = "BIST_TEST"
+Test_Name = "Production_Test"
 
 Character1 = "\\"
 Character2 = "_" 
@@ -51,12 +66,14 @@ Log_Name = Character1 + Test_Name + Character2 + Test_Date + Character2 + Test_T
 #####     Memory address offset
 #########################################
 #light  sleep mode reg == 
+
+
 MEM_PWR_MD_LS1 = "30000a0"
 MEM_PWR_MD_LS2 = "30000a4"
-MEM_PWR_MD_DS1 ="30000a8"
-MEM_PWR_MD_DS2 = "30000ac"
-MEM_PWR_MD_SD1 = "30000b0"
-MEM_PWR_MD_SD2 = "30000b4"
+MEM_PWR_MD_DS1 = "30000A8"
+MEM_PWR_MD_DS2 = "30000AC"
+MEM_PWR_MD_SD1 ="30000B0"
+MEM_PWR_MD_SD2 = "30000B4"
 #########################
 
 PTCM_Start_Bit =18

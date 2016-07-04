@@ -31,3 +31,5 @@ import binascii
 ##########################################################
 execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Init_Configuration.py")
 execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Function.py")
+
+
