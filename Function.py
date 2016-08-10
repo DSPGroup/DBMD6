@@ -728,7 +728,7 @@ def All_Memory_Power_Mode (power_mode, on_off):
         clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS2,"ffe")
         print"clear the bits of shut_down"
-        clear_bit (MEM_PWR_MD_SD1,"3ffffff")
+        clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
         if (on_off == 1):
             print" "
