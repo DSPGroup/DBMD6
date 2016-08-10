@@ -36,7 +36,7 @@ def SerialConfig_2(COM , BAUD_RATE):
     ser_2.parity = PARIT
     ser_2.stopbits = STOP_BITS
     ser_2.timeout = TIME_SERIAL
-    ser.open()
+    ser_2.open()
     #print "##################################''
     #print "Function  SerialConfig_2 load !!"
     #print "##################################"
@@ -46,40 +46,25 @@ def SerialConfig_2(COM , BAUD_RATE):
 def Sync (): 
     D4_received_word = ''
     timeout_start = time.time()
-    timeout = 10
+    timeout = 20
     reset_time = 0
-    while ((D4_received_word != "OK") and (time.time() < (timeout_start + timeout))):
-        ser.write(chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
-                  +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
-                  +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
-                  +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)) 
-        D4_received_word = ser.read(2)
+    #while ((D4_received_word != "OK") and (time.time() < (timeout_start + timeout))):
+    ser.write(chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
+    +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
+    +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
+    +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)) 
+    time.sleep(0.3)
+    D4_received_word = ser.read(2)
     if D4_received_word == "OK":
         time.sleep(0.1)
         Boot_Complete=1
-        print "#################################"
-        print "D4_received_word = " ,D4_received_word
-        print "Got Sync"
-        Add_To_File("Got Sync")
-        Add_To_File("\n\n")
-        print "#################################"
+        write_to_log("Synced!\n")
 
-    else:
-        print "#################################"
-        print "D4_received_word = " ,D4_received_word
-        print "NO Sync\n"
-        Add_To_File("NO Sync")
-        Add_To_File("\n\n")
-        print "need Restart to the D6"
-        Add_To_File("need Restart to the D6")
-        reset ()
-        time.sleep (1)
+    else:            
+        write_to_log("Sync failed\n")
+        #write_to_log("Startover Sync function, loop number: "+str(reset_time))
+        #reset_time =  reset_time +1
         
-        print "#################################"
-        print "call to the Sync function, loop number" ,reset_time
-        print "\n\n"
-        reset_time =  reset_time +1
-        sync ()
 
 ####################################################################################################################################
 #read APB Address
@@ -112,9 +97,9 @@ def read_apb_reg(addr):
     Add_To_File("\n\n")
     print "#################################"
     
-print ''
-print 'Function  read_apb_reg load !!'
-print ''
+    print ''
+    print 'Function read_apb_reg load !!'
+    print ''
 
 #########################################################################################################################################################
 #write APB Address
@@ -153,9 +138,9 @@ def write_apb_reg(addr,value):
     Add_To_File("\n\n")
     print "#################################"
     
-print ''
-print 'Function  read_apb_reg load !!'
-print '##################################'
+    print ''
+    print 'Function write_apb_reg load !!'
+    print '##################################'
 
 #########################################################################################################################################################
 #checkSum
@@ -179,14 +164,11 @@ def checkSum():
     Add_To_File(ReadSerial)
     Add_To_File("\n\n")
     print "#################################"
-    #print ''
-    #print 'Function  checkSum load !!'
-    #print '##################################'
 
     print ''
     print 'Function  checkSum load !!'
     print '##################################'
-
+    return ReadSerial
 #########################################################################################################################################################
 # create a new directory 
 #################################
@@ -202,7 +184,7 @@ def Open_log(Log_Name):
     temp = Dir_Name + Log_Name
     Current_File_Name = temp
     print temp
-    openfile = open(temp , 'w')
+    openfile = open(temp , 'a')
     openfile.write(Log_Name)
     openfile.write("\n")
     openfile.close()
@@ -217,6 +199,19 @@ def Add_To_File(Add_Line):
     #f.write("\n")
     f.close()
 
+
+def write_to_file(time, user_input):
+	log_file = open(Current_File_Name, "a")
+	log_file.write("%s\t" %time)
+	log_file.write("%s\n" %user_input)
+	log_file.close()
+
+def write_to_log(user_input):
+	time = datetime.datetime.today().strftime('%d/%m/%Y %H:%M:%S:%f')
+	print time,'\t',user_input
+	write_to_file(time, user_input)
+
+    
 #########################################################################################################################################################
 # reset = set GPIO 10 low for reset purpose
 #GPIO10 must be physically connected to reset button (SW1-pin 3)!!!!!!!!
@@ -227,7 +222,7 @@ def reset():
     time.sleep (1)
     #GP_DATA_CLR configure GPIO10 to low (set to 0)
     write_apb_reg("04000008","0400")
-    print "Reset the D6 Board"
+    print "Please reset the D6 Board"
     
 #########################################################################################################################################################
 # clear_bit = clear the wanted bits in the register
@@ -792,7 +787,7 @@ def All_Memory_Power_Mode (power_mode, on_off):
     print "power mode configure to " , power_mode        
 ###############################################################################################################################
 ###############################################################################################################################   
-def  Memory_Block_Select (memory_name , memory_section , mode):
+def Memory_Block_Select (memory_name , memory_section , mode):
     All_Memory_Power_Mode ("light_sleep" , 0)
 
     list1 = [PTCM,DTCM,TAG,CACHE,PAHB]
@@ -827,56 +822,101 @@ def BaudRateCalculation(Integer,Frac ,APB_Clock):
     buad_rate = (1.0/16.0*(APB_Clock/(Integer+Frac/16)))
     return int (buad_rate)
 
-
-def load_file(file_name, unsent_bytes,flag):
-    infile = open(file_name,"rb")
-    list_file = list(infile.read())
-    list_file = [i for i in list_file]
-    #wakeup()
-    j=0
-    if (flag ==1):
-        print "start to send the file ......"
-        while (j < len(list_file) - unsent_bytes):
-            ser.write(str(list_file[j]))
-            j = j + 1
-            print "........",
-            #time.sleep(0.05)
-        
-    # # verify boot succeeded
-    #     ser.write(chr(0x5A))
-    #     ser.write(chr(0x0B))
-    #     time.sleep(1)
-    #     ser.flushInput()
-    #     ser.write("019r")	
-    #     version = ser.read(5)
-    #     print "vertion = ",version
-    #     # #print ("Chip Type = " + str(version)[:4])
-    #     print "Chip Type = " + str(version)[:4]
-    #     # time.sleep(0.1)
-    #     if (version[:3] == 'dbd'):
-    #         Boot_Complete=1
-    #         print "Boot Succeeded"
-    #     print "Boot Failed"
-    print "file send completed"
-    print "file load successful"
 def exeBootFile():
     ser.write(chr(0x5A))
     ser.write(chr(0x0B))
+ 
+def load_file(file_name, unsent_bytes):
+    infile = open(file_name,"rb")
+    list_file = list(infile.read())
+    list_file = [i for i in list_file]
+    wakeup()
+    j=0
+    
+    write_to_log("Start sending the file: "+ file_name)
+    while (j < len(list_file) - unsent_bytes):
+        ser.write(str(list_file[j]))
+        j = j + 1
+		#print
+        #time.sleep(0.05)
+    write_to_log("Done sending the file")
+        
+    time.sleep(1)
+    ser.flushInput()
+    
+    write_to_log("File load successful")
 
-def FW_init():
-		#disable_statistic()
-		FW_write_register_short("29","0001")
-		FW_write_register_short("22","0040")
-		FW_write_register_short("23","6023")
-#		time.sleep (5)
-		FW_write_register_short("10","9015")
-		FW_write_register_short("15","8e8e")
-		FW_write_register_short("24","f043")
-		pre_load_trigger_model("2_HBG_v332.bin")
-		load_trigger_model ("2_HBG_v332.bin")
-		FW_write_register("17","8")
-		FW_write_register("01","0001")
-		print("Init ended")
+def load_boot_file(file_name):
+    
+    #write_to_log("Starting to send boot file") 
+    infile = open(file_name, "rb")
+    list_file = list(infile.read())
+    j=0
+    while(j < len(list_file)) :
+        ser.write(str(list_file[j]))
+        j = j + 1
+    
+    #write_to_log("Done sending boot file")       
+        
+    # verify boot succeeded
+    ser.write(chr(0x5A))
+    ser.write(chr(0x0B))
+    time.sleep(1)
+    ser.flushInput()
+    time.sleep(2)
+    ser.write("19r")
+    time.sleep(1)
+    version = ser.read(5)
+    #write_to_log("Chip Type = " + str(version)[:4])
+    # time.sleep(0.1)
+    #write_to_log("\n")
+    if (version[:3] == 'dbd'):
+        Boot_Complete=1
+        write_to_log("Boot Succeeded\n")
+    else:
+        write_to_log("Boot Failed\n")
+
+
+
+
+def FW_init(): #loading a specific acoustic model- analog mic, VT interupt on GPIO14
+    write_to_log("FW acoustic model configuration started")
+    FW_read_register ("0")
+    FW_write_register_short("29","0001") #close all interfaces except UART
+    FW_write_register_short("22","1220") #configure HW VAD, LDO at 0.9v 11v-->0.9v, OSC
+    FW_write_register_short("23","6022") #Configure MIPS to be: 12MHz
+    # time.sleep (1)
+    FW_write_register_short("10","6000") #AHB = APB = 12MHz  
+    #FW_write_register_short("10","6015") #AHB = 2MHz, APB = 1MHZ
+    # time.sleep (1)
+    FW_write_register_short("15","8e8e") #Configure interrupt GPIO 14
+    #FW_write_register_short("24","f043") #Configure digital microphone 1MHz 
+    FW_write_register_short("24","0028")
+    pre_load_trigger_model("C:\DBMD6-github\HBG_v332.bin") #Pre-Load acoustic model
+    load_model ("C:\DBMD6-github\HBG_v332.bin",'0') #Load acoustic model
+    FW_write_register_short("17","8") #Disable audio buffering
+    FW_write_register_short("01","0001") #Enter 
+    write_to_log("\n")
+    write_to_log("Configuration ended\n")
+
+def FW_init_strap10(): #loading a specific acoustic model- analog mic, VT interupt on GPIO14
+    write_to_log("FW acoustic model configuration started")
+    FW_read_register ("0")
+    FW_write_register_short("29","0001") #close all interfaces except UART
+    FW_write_register_short("22","1220") #configure HW VAD, LDO at 0.9v 11v-->0.9v, OSC
+    FW_write_register_short("23","6022") #Configure MIPS to be: 12MHz    #for bypass mode: '0022'
+    # time.sleep (1)
+    FW_write_register_short("10","6015") #6015 for: AHB = 2MHz, APB = 1MHZ     #6005 for: AHB = 2MHz, APB = 2MHZ 
+    # time.sleep (1)
+    FW_write_register_short("15","8e8e") #Configure interrupt GPIO 14
+    #FW_write_register_short("24","f043") #Configure digital microphone 1MHz 
+    FW_write_register_short("24","0028")
+    pre_load_trigger_model("C:\DBMD6-github\HBG_v332.bin") #Pre-Load acoustic model
+    load_model ("C:\DBMD6-github\HBG_v332.bin",'0') #Load acoustic model
+    FW_write_register_short("17","8") #Disable audio buffering
+    FW_write_register_short("01","0001") #Enter 
+    write_to_log("\n")
+    write_to_log("Configuration ended\n")
 
 def FW_write_register(reg_num, value):
 	global write_in_progress
@@ -884,7 +924,7 @@ def FW_write_register(reg_num, value):
 	while (1):
 		if (write_in_progress == False):
 			write_in_progress = True
-			#wakeup()
+			wakeup()
 			value = str(value)
 			if (value in LIST_OF_VALUES):
 				value = LIST_OF_VALUES[value]
@@ -894,34 +934,37 @@ def FW_write_register(reg_num, value):
 			
 			ser.write(reg_num + "w" + value)
 			time.sleep (0.01)
-			read_register(reg_num)
+			FW_read_register(reg_num)
 
 			write_in_progress = False
 			break
 		else:
 			print "writing in use... please wait..."
 			time.sleep(0.01)
-		
+
+
+#short- without reading the register after writing		
 def FW_write_register_short(reg_num, value):
-	global write_in_progress	
-	ser.flushInput()
-	while (1):
-		if (write_in_progress == False):
-			write_in_progress = True
-			#wakeup()
-			value = str(value)
-			if (value in LIST_OF_VALUES):
-				value = LIST_OF_VALUES[value]
-			value = value.zfill(4)
-			reg_num = str(reg_num)
-			reg_num = reg_num.zfill(3)
-			
-			ser.write(reg_num + "w" + value)
-			write_in_progress = False
-			break
-		else:
-			print "writing in use... please wait..."
-			time.sleep(0.01)
+    global write_in_progress	
+    ser.flushInput()
+    while (1):
+        if (write_in_progress == False):
+            write_in_progress = True
+            wakeup()
+            value = str(value)
+            if (value in LIST_OF_VALUES):
+                value = LIST_OF_VALUES[value]
+            value = value.zfill(4)
+            reg_num = str(reg_num)
+            reg_num = reg_num.zfill(3)
+            ser.write(reg_num + "w" + value)
+            write_in_progress = False
+            time.sleep (0.5)
+            #FW_read_register(reg_num)
+            break
+        else:
+            print "writing in use... please wait..."
+            time.sleep(0.01)
 
 def FW_read_register(register_num):
 	global read_in_progress	
@@ -929,32 +972,31 @@ def FW_read_register(register_num):
 	while (1):
 		if (read_in_progress == False):
 			read_in_progress = True
-			#wakeup()
+			wakeup()
 			register_num = str(register_num)
 			register_num = register_num.zfill(3)
 			ser.write(register_num + "r")
 			serRead = ser.read(5)[:4]
-			#print("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
-			print ("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
+			write_to_log("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
 			read_in_progress = False
 			break
 		else:
 			print "writing in use... please wait..."
 			time.sleep(0.01)
 		
-def FW_read_register_short(register_num):
+def FW_read_register_return_value(register_num):
     global read_in_progress	
     ser.flushInput()
     while (1):
         if (read_in_progress == False):
             read_in_progress = True
-            #wakeup()
+            wakeup()
             register_num = str(register_num)
             register_num = register_num.zfill(3)
             ser.write(register_num + "r")
             serRead = ser.read(5)[:4]
             read_in_progress = False
-            print "serRead address" , register_num , "=" , serRead
+            write_to_log("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
             return serRead
         else:
             print "writing in use... please wait..."		
@@ -970,29 +1012,30 @@ def FW_read_register_loop(register_num):
 	print("done loop reading") 
 
 def FW_read_IO_port (reg_address):
-	global read_in_progress	
-	ser.flushInput()
-	while (1):
-		if (read_in_progress == False):
-			read_in_progress = True
-			reg_address = (str(reg_address)).zfill(8)		
-			address_msb = reg_address [:4]
-			address_lsb = reg_address [4:8]
-			wakeup()
-			ser.write("006w" + address_msb)
-			time.sleep (0.001)
-			ser.write("005w" + address_lsb)
-			time.sleep (0.001)
-			ser.write("007r")
-			value_lsb = ser.read(5)[:4]
-			ser.write("008r")
-			value_msb = ser.read(5)[:4]
-			print("reg: 0x" + reg_address + " ; value: 0x" + str(value_msb)+str(value_lsb))
-			read_in_progress = False
-			break
-		else:
-			print("reading in use... please wait...")			
-			time.sleep(0.01)
+    global read_in_progress	
+    ser.flushInput()
+    while (1):
+        if (read_in_progress == False):
+            read_in_progress = True
+            reg_address = (str(reg_address)).zfill(8)		
+            address_msb = reg_address [:4]
+            address_lsb = reg_address [4:8]
+            wakeup()
+            ser.write("006w" + address_msb)
+            time.sleep (0.001)
+            ser.write("005w" + address_lsb)
+            time.sleep (0.001)
+            ser.write("007r")
+            value_lsb = ser.read(5)[:4]
+            ser.write("008r")
+            value_msb = ser.read(5)[:4]
+            write_to_log("reg: 0x" + reg_address + " ; value: 0x" + str(value_msb)+str(value_lsb))
+            read_in_progress = False
+            #break
+            return str(value_msb)+str(value_lsb)
+        else:
+            print("reading in use... please wait...")			
+            time.sleep(0.01)
 
 def FW_write_IO_port (reg_address, reg_value):
 	global write_in_progress	
@@ -1015,9 +1058,82 @@ def FW_write_IO_port (reg_address, reg_value):
 			time.sleep (0.001)
 			ser.write("008w" + value_msb)
 			
-			read_IO_port (reg_address)
+			FW_read_IO_port (reg_address)
 			write_in_progress = False
 			break
 		else:
 			print("writing in use... please wait...")			
 			time.sleep(0.01)
+
+def pre_load_trigger_model(trigger_model):
+	if os.path.isfile(trigger_model):
+		FW_write_register(2, str(hex((os.path.getsize(trigger_model))/16+3).rstrip("L")[2:]))
+	else:
+		write_to_log("Acoustic model not found: " + trigger_model)
+
+def load_model(model_filename, mode):
+    if os.path.isfile(model_filename):
+        FW_write_register_short ("f", mode)
+        time.sleep(0.1)	
+        wakeup()	
+        load_file(model_filename,0)
+    
+        # # Checksum test
+        # calculated_checksum = checkSum()
+        # checksum_from_fw = read_checksum_from_fw()
+        # write_to_log("The checksum for Acoustic model is: " + str(checksum_from_fw))
+        # 
+        # if (calculated_checksum == checksum_from_fw):
+        # 	write_to_log ("Acoutic Model: Checksum test - Pass")
+        # else:
+        # 	write_to_log ("Acoutic Model: Checksum test - Fail")
+        # 	sys.exit()
+        
+        #ser.write(chr(0x5A))
+        #ser.write(chr(0x0B))
+        
+        
+        # for trigger model only!
+        mode = int(mode)
+        if (mode == 0):
+            time.sleep(0.05)
+            reg_value=FW_read_register_return_value("41")
+            if (reg_value == '0001'):
+                write_to_log("Acoustic model loaded: " + model_filename)
+                return
+            else:
+                write_to_log("Trigger acoustic model failed to load")
+                return
+    
+    else:
+        write_to_log("Acoustic model not found: " + model_filename)
+
+        
+def read_checksum_from_fw_file(file_name):
+	infile = open(file_name, "rb")
+	list_file = list(infile.read())
+	j=len(list_file) - 4
+	checksum_data = []
+	for i in xrange(0, 4):
+		checksum_data.append(str(hex(ord(list_file[j+i]))))
+	return checksum_data
+
+def wakeup():
+    if ( (chip_type=="D4") or (chip_type=="D6") ):
+        ser.write(chr(0x00))
+        time.sleep(0.05)
+        ser.write(chr(0x00))
+        time.sleep(0.05)
+        ser.write(chr(0x00))
+        ser.flushInput()
+        time.sleep(0.3)
+    else:
+        GPIO.output(WAKEUP_GPIO,True)
+        time.sleep(0.1)
+        
+
+def playAudioFile(audio_file_name):
+    winsound.PlaySound(audio_file_name, winsound.SND_FILENAME)
+    write_to_log("playing audio file: "+audio_file_name)
+    
+    
