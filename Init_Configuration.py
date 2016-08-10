@@ -26,8 +26,8 @@ chip_type = "D6"
 #########################################
 #####     Uart Basic Configuration
 #########################################
-COM = 'COM11'
-BAUD_RATE = 921600
+COM = 'COM4'
+BAUD_RATE = 57600 #115200
 BYTE_SIZE = 8
 PARIT = 'N'
 STOP_BITS = 1
@@ -39,22 +39,29 @@ Frac =11.0
 #########################################
 #####     Hen Create Folder
 #########################################
-Path_Folder = r'C:\Users\henl\Documents\D6\BIST_test_results'
+#Path_Folder = r'C:\Users\henl\Documents\D6\BIST_test_results'
 
 #########################################
 #####     Eran Create Folder
 #########################################
 #Path_Folder = r'C:\tmp\Python\\'
 
+#Folder_Name = "Test Result"
+#Folder_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
+#Dir_Name = os.path.join(Path_Folder , Folder_Name , Folder_Date)
+
+#########################################
+#####     Bar Create Folder
+#########################################
+Path_Folder = r'C:\python_scripts\\'
 Folder_Name = "Test Result"
 Folder_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 Dir_Name = os.path.join(Path_Folder , Folder_Name , Folder_Date)
-
 #########################################
 #####     Log
 #########################################
 
-Test_Name = "Production_Test"
+Test_Name = "HBG_Test"
 
 Character1 = "\\"
 Character2 = "_" 
@@ -66,7 +73,6 @@ Log_Name = Character1 + Test_Name + Character2 + Test_Date + Character2 + Test_T
 #####     Memory address offset
 #########################################
 #light  sleep mode reg == 
-
 
 MEM_PWR_MD_LS1 = "30000a0"
 MEM_PWR_MD_LS2 = "30000a4"
