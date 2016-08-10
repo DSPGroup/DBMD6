@@ -19,6 +19,7 @@ import shlex
 import datetime
 import shutil
 import binascii
+import winsound #for running audio files
 
 ##########################################################
 #Hen File Configuration
@@ -29,7 +30,11 @@ import binascii
 ##########################################################
 #Eran File Configuration
 ##########################################################
-execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Init_Configuration.py")
-execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Function.py")
+#execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Init_Configuration.py")
+#execfile("C:\Users\erans\Documents\Validation\Python\Git\DBMD6\Function.py")
 
-
+##########################################################
+#Bar's File Configuration
+##########################################################
+execfile("C:\DBMD6-github\Init_Configuration.py")
+execfile("C:\DBMD6-github\Function.py")
