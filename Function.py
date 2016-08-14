@@ -36,50 +36,35 @@ def SerialConfig_2(COM , BAUD_RATE):
     ser_2.parity = PARIT
     ser_2.stopbits = STOP_BITS
     ser_2.timeout = TIME_SERIAL
-    ser.open()
+    ser_2.open()
     #print "##################################''
     #print "Function  SerialConfig_2 load !!"
     #print "##################################"
        
 ####################################################################################################################################
 #SYNC withloaded
-def Sync (): 
+def Sync (number_of_attampts): 
     D4_received_word = ''
-    timeout_start = time.time()
-    timeout = 10
-    reset_time = 0
-    while ((D4_received_word != "OK") and (time.time() < (timeout_start + timeout))):
+    i=0
+    while (i < number_of_attampts):
         ser.write(chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
-                  +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
-                  +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
-                  +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)) 
+        +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
+        +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)
+        +chr(0x0)+chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)+ chr(0x0)) 
+        time.sleep(0.3)
         D4_received_word = ser.read(2)
-    if D4_received_word == "OK":
-        time.sleep(0.1)
-        Boot_Complete=1
-        print "#################################"
-        print "D4_received_word = " ,D4_received_word
-        print "Got Sync"
-        Add_To_File("Got Sync")
-        Add_To_File("\n\n")
-        print "#################################"
+        if D4_received_word == "OK":
+            time.sleep(0.1)
+            Boot_Complete=1
+            write_to_log("Synced!\n")
+            break
 
-    else:
-        print "#################################"
-        print "D4_received_word = " ,D4_received_word
-        print "NO Sync\n"
-        Add_To_File("NO Sync")
-        Add_To_File("\n\n")
-        print "need Restart to the D6"
-        Add_To_File("need Restart to the D6")
-        reset ()
-        time.sleep (1)
+        else:            
+            write_to_log("Sync failed\n")
+            write_to_log("Startover Sync function, loop number: "+str(i))
+            write_to_log("Please restart D6")
+            i=i+1
         
-        print "#################################"
-        print "call to the Sync function, loop number" ,reset_time
-        print "\n\n"
-        reset_time =  reset_time +1
-        sync ()
 
 ####################################################################################################################################
 #read APB Address
@@ -102,19 +87,8 @@ def read_apb_reg(addr):
     #convert ascii to hex value
     apb_reg =binascii.hexlify(reg[5])+binascii.hexlify(reg[4])+binascii.hexlify(reg[3])+binascii.hexlify(reg[2])
 
-    print "#################################"
-    print "Read Address ", addr ,"return value", apb_reg
-    Add_To_File("Read Address ")
-    Add_To_File(addr)
-    Add_To_File(' ')
-    Add_To_File("return value ")
-    Add_To_File(apb_reg)
-    Add_To_File("\n\n")
-    print "#################################"
+    write_to_log("Read Address ", addr ,"return value", apb_reg +'\n')
     
-print ''
-print 'Function  read_apb_reg load !!'
-print ''
 
 #########################################################################################################################################################
 #write APB Address
@@ -143,19 +117,8 @@ def write_apb_reg(addr,value):
     test = ser.write(chr(0x5A)+chr(0x04)+asciiaddr6+asciiaddr4+asciiaddr2+asciiaddr0+asciivalue6+asciivalue4+asciivalue2+asciivalue0)
     time.sleep(0.1)
     
-    print '#################################'
-    print "Write Address ", addr ,"with value", value
-    Add_To_File("Write Address ")
-    Add_To_File(addr)
-    Add_To_File(' ')
-    Add_To_File("with value ")
-    Add_To_File(value)
-    Add_To_File("\n\n")
-    print "#################################"
-    
-print ''
-print 'Function  read_apb_reg load !!'
-print '##################################'
+    write_to_log("Write Address: "+ addr +"with value"+ value + '\n')
+
 
 #########################################################################################################################################################
 #checkSum
@@ -170,24 +133,11 @@ def checkSum():
     ReadSerial = ser.read(8)
     time.sleep(0.1)
     
-    
     ser.flushInput()
     time.sleep(0.5)
-    
-    print '#################################'
-    print "Check Checksum", ReadSerial 
-    Add_To_File("Check Checksum")
-    Add_To_File(ReadSerial)
-    Add_To_File("\n\n")
-    print "#################################"
-    #print ''
-    #print 'Function  checkSum load !!'
-    #print '##################################'
-
-    print ''
-    print 'Function  checkSum load !!'
-    print '##################################'
-
+   
+    write_to_log("Checksun return: "+ ReadSerial + '\n')
+    return ReadSerial
 #########################################################################################################################################################
 # create a new directory 
 #################################
@@ -203,7 +153,7 @@ def Open_log(Log_Name):
     temp = Dir_Name + Log_Name
     Current_File_Name = temp
     print temp
-    openfile = open(temp , 'w')
+    openfile = open(temp , 'a')
     openfile.write(Log_Name)
     openfile.write("\n")
     openfile.close()
@@ -213,12 +163,24 @@ def Open_log(Log_Name):
 #################################
 
 def Add_To_File(Add_Line):
-    
     f = open(Current_File_Name, 'a')
     f.write(Add_Line)
     #f.write("\n")
     f.close()
 
+
+def write_to_file(time, user_input):
+	log_file = open(Current_File_Name, "a")
+	log_file.write("%s\t" %time)
+	log_file.write("%s\n" %user_input)
+	log_file.close()
+
+def write_to_log(user_input):
+	time = datetime.datetime.today().strftime('%d/%m/%Y %H:%M:%S:%f')
+	print time,'\t',user_input
+	write_to_file(time, user_input)
+
+    
 #########################################################################################################################################################
 # reset = set GPIO 10 low for reset purpose
 #GPIO10 must be physically connected to reset button (SW1-pin 3)!!!!!!!!
@@ -229,7 +191,7 @@ def reset():
     time.sleep (1)
     #GP_DATA_CLR configure GPIO10 to low (set to 0)
     write_apb_reg("04000008","0400")
-    print "Reset the D6 Board"
+    print "Please reset the D6 Board"
     
 #########################################################################################################################################################
 # clear_bit = clear the wanted bits in the register
@@ -265,9 +227,8 @@ def clear_bit(addr,bits_clr_hex):
     #print ("hex final:  ",hex_fin_reg)
     
     #write the new value to the register
-    print ""
-    print " Clear the following Address : " ,addr ," with value " ,hex_fin_reg
-    print ""
+    write_to_log("Clear the following Address: "+ addr +" with value: " +hex_fin_reg)
+
     write_apb_reg(addr,hex_fin_reg)
 
 #########################################################################################################################################################
@@ -305,9 +266,8 @@ def set_bit(addr,bits_set_hex):
     #print ("hex final:  ",hex_fin_reg)
     
     #write the new value to the register
-    print ""
-    print " Set the following Address : " ,addr ," with value " ,hex_fin_reg
-    print ""
+    write_to_log("Set the following Address: " +addr +" with value: " +hex_fin_reg)
+
     write_apb_reg(addr,hex_fin_reg)
 
 
@@ -617,11 +577,11 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "30030100")
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "1180")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "4000000")
             write_apb_reg("3000004", "20030100")
@@ -629,14 +589,14 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         print "\n Return the system to PLL \n"
         write_apb_reg("3000000", "40000400")
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to 387670\n"
         SerialConfig_1(COM , 387670)
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,25198600.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,25198600.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -653,20 +613,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3003e700") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "11f3")
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2003e700")
-        time.sleep(2)
+        time.sleep(1)
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " ,BaudRateCalculation (Integer,Frac,32768000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,32768000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -683,20 +643,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3005db00") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "12ed")
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2005db00")
-        time.sleep(2)
+        time.sleep(1)
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " ,BaudRateCalculation (Integer,Frac,49152000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,49152000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -713,20 +673,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3008c900") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "1464")
-            time.sleep(2)
+            time.sleep(1)
         else:
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2008c900")
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,73728000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,73728000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -743,20 +703,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "3009cd00") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "14e6")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "2009cd00")
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " , BaudRateCalculation (Integer,Frac,82247680.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,82247680.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -773,20 +733,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "300af600") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "157b")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "200af600")   
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to " , BaudRateCalculation (Integer,Frac,91979776)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,91979776))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -803,20 +763,20 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         # change the PLL  div reg
         write_apb_reg("3000004", "30000000") 
         write_apb_reg("3000004", "300bb700") 
-        time.sleep(2)
+        time.sleep(1)
         # change the PLL  BWAJ
         if chip_type == "D4" :
             write_apb_reg("3000000", "15db")
-            time.sleep(2)
+            time.sleep(1)
         else :
             write_apb_reg("3000000", "40000400")
             write_apb_reg("3000004", "200bb700")   
         print "\n Return the system to PLL \n"
         write_apb_reg ("3000008", "00000000")
-        time.sleep(2)
+        time.sleep(1)
         print "\nChange the COM Baudrate to" , BaudRateCalculation (Integer,Frac,98304000.0)
         SerialConfig_1(COM , BaudRateCalculation (Integer,Frac,98304000.0))
-        time.sleep(2)
+        time.sleep(1)
         read_apb_reg ("3000004")
         print" \n\n configure System_Clock_PLL to " ,freq ,"MHz Completed !!!"
         Add_To_File("\n\n")
@@ -829,126 +789,438 @@ def System_Clock_PLL (freq ,OSC_Freq,chip_type ):
         print "Error no legal freq selected"
 ###############################################################################################################################
  
-def All_Memory_Power_Mode (power_mode, on_off):
+def All_Memory_Power_Mode (power_mode):  #power_mode can get: atcive ; light_sleep ; deep_sleep ; shut_down
     if (power_mode == "light_sleep" ):
-        #need to verify clear bit of the following modes := deep_sleep and  shut_down
-        print"clear the bits of deep_sleep"
+        #need to verify clear bit of the following modes := DEEP SLEEP and SHUT DOWN
+        #clear bits of DEEP SLEEP:
         clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS2,"ffe")
+<<<<<<< HEAD
         print"clear the bits of shut_down"
-        clear_bit (MEM_PWR_MD_SD1,"3ffffff")
+        clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
         if (on_off == 1):
-            #set the light_sleep mode
-            set_bit (MEM_PWR_MD_LS1,"3ffffff")
-            set_bit (MEM_PWR_MD_LS2,"1fff")
-            print"all the following block enter to light_sleep"
-            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
+            print" "
+            print "\n\n######################\n\nAll the following block enter to light_sleep\n\n######################\n\n"
+            set_bit (MEM_PWR_MD_LS2,"1FFF")
+            # not include CHACHE 0&1 , DTCM 0,1,2,3
+            set_bit (MEM_PWR_MD_LS1,"3FFFC3C")
         else :
-            clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+            clear_bit (MEM_PWR_MD_LS1,"3FFFFFF")
             clear_bit (MEM_PWR_MD_LS2,"1fff")
+=======
+        #clear bits of SHUT DOWN:
+        clear_bit (MEM_PWR_MD_SD1,"3ffffff")
+        clear_bit (MEM_PWR_MD_SD1,"ffe")
+        #set the LIGHT SLEEP mode
+        set_bit (MEM_PWR_MD_LS2,"1FFF")    # not include CHACHE 0&1 , DTCM 0,1,2,3
+        set_bit (MEM_PWR_MD_LS1,"3FFFC3C")
+        write_to_log("All memory blocks entered to LIGHT SLEEP mode")
+
+>>>>>>> 7a189439d80eb87b7625ac5139057ee8228c8ffd
         
     elif (power_mode == "deep_sleep" ):
-        #need to verify clear bit of the following modes := light_sleep and  shut_down
-        print ""
-        print "clear the bits of deep_sleep"
-        print ""
-        clear_bit (MEM_PWR_MD_LS1,"3ffffff")
-        clear_bit (MEM_PWR_MD_LS2,"1fff")
-        print ""
-        print"clear the bits of shut_down"
-        print ""
+        #clear the bits of SHUT DOWN:
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
-        clear_bit (MEM_PWR_MD_DS1,"ffe")
-        if (on_off == 1):
-            #set the deep_sleep mode
-            set_bit (MEM_PWR_MD_DS1,"3ffffff")
-            set_bit (MEM_PWR_MD_DS1,"ffe")
-            print ""
-            print"all the following block enter to deep_sleep \n\n"
-            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , PAHB0 "
-            print ""
-        else :
-            print ""
-            print"SET Momory in Active Mode"
-            print ""
-            clear_bit (MEM_PWR_MD_DS1,"3ffffff")
-            clear_bit (MEM_PWR_MD_DS1,"ffe")
-        
+        clear_bit (MEM_PWR_MD_SD2,"7fe")
+        #clear the bits of LIGHT SLEEP:
+        clear_bit (MEM_PWR_MD_LS2,"7fe")
+        clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+        #set the DEEP SLEEP mode
+        set_bit (MEM_PWR_MD_DS2,"7fe")
+        set_bit (MEM_PWR_MD_DS1,"3FFfc3c")
+        write_to_log("All memory blocks entered to DEEP SLEEP mode")
+
     elif (power_mode == "shut_down" ):
-        if (on_off == 1):
-            set_bit (MEM_PWR_MD_SD1,"3ffffff")
-            set_bit (MEM_PWR_MD_DS1,"ffe")
-            print ""
-            print"all the following block enter to shut_down \n\n"
-            print"PTCM0_LS_EN , DTCM0_LS_EN , TAG0_LS_EN , CACHE0_LS_EN , HWVAD1 , ROM , PAHB0 , HWVAD0"
-            print ""
-        else:
-            print ""
-            print"SET Memory in Active Mode"
-            print ""
-            clear_bit (MEM_PWR_MD_DS1,"3ffffff")
-            clear_bit (MEM_PWR_MD_DS1,"ffe")
-            print ""
-            print"clear the bits of deep_sleep"
-            print ""
-            clear_bit (MEM_PWR_MD_LS1,"3ffffff")
-            clear_bit (MEM_PWR_MD_LS2,"1fff")
-            print ""
-            print"clear the bits of shut_down"
-            print ""
-            clear_bit (MEM_PWR_MD_SD1,"3ffffff")
-            clear_bit (MEM_PWR_MD_DS1,"ffe")
+        #clear the bits of LIGHT SLEEP:
+        clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+        clear_bit (MEM_PWR_MD_LS2,"7fe")
+        #clear bits of DEEP SLEEP:
+        clear_bit (MEM_PWR_MD_DS1,"3ffffff")
+        clear_bit (MEM_PWR_MD_DS2,"ffe")
+        #set the SHUT DOWN mode:
+        set_bit (MEM_PWR_MD_SD2,"7fe")
+        set_bit (MEM_PWR_MD_SD1,"3FFfc3c")
+        write_to_log("All memory blocks entered to SHUT DOWN mode")
+
+    elif (power_mode == "active"):
+        #clear the bits of LIGHT SLEEP:
+        clear_bit (MEM_PWR_MD_LS1,"3ffffff")
+        clear_bit (MEM_PWR_MD_LS2,"7fe")
+        #clear bits of DEEP SLEEP:
+        clear_bit (MEM_PWR_MD_DS1,"3ffffff")
+        clear_bit (MEM_PWR_MD_DS2,"ffe")
+        #clear the bits of SHUT DOWN:
+        clear_bit (MEM_PWR_MD_SD1,"3ffffff")
+        clear_bit (MEM_PWR_MD_SD2,"7fe")
+        write_to_log("All memory blocks entered to ACTIVE mode")
             
-    print "power mode configure to " , power_mode        
+    write_to_log("power mode configure to "+ power_mode )     
 ###############################################################################################################################
 ###############################################################################################################################   
-def  Memory_Block_Select (memory_name , memory_section , mode):
-    All_Memory_Power_Mode ("light_sleep" , 0)
+def Memory_Block_Select (memory_name , memory_section , mode):
+    #All_Memory_Power_Mode_2 ("active")
 
-    list1 = [PTCM,DTCM,TAG,CACHE,PAHB]
-    list2 = [HWVAD0, HWVAD1,PAHB,ROM]
+    list1 = ['PTCM','DTCM','TAG','CACHE','PAHB']
+    list2 = ['HWVAD0', 'HWVAD1','PAHB','ROM']
     
-    if (mode == "light_sleep" ):
+    if (mode == "active" ):
         if (memory_name in list1):
-            set_bit (MEM_PWR_MD_LS1,memory_name[memory_section])
+            clear_bit (MEM_PWR_MD_LS1,MEM_DICT[memory_name][memory_section])
+            clear_bit (MEM_PWR_MD_DS1,MEM_DICT[memory_name][memory_section])
+            clear_bit (MEM_PWR_MD_SD1,MEM_DICT[memory_name][memory_section])
         elif (memory_name in list2):
-            set_bit (MEM_PWR_MD_LS2,memory_name[memory_section])
-        print ""
-        print "set bit for " , memory_name[memory_section] , ", on section = ", memory_section , ",  power mode = " , mode
-        print ""
+            clear_bit (MEM_PWR_MD_LS2,MEM_DICT[memory_name][memory_section])
+            clear_bit (MEM_PWR_MD_DS2,MEM_DICT[memory_name][memory_section])
+            clear_bit (MEM_PWR_MD_SD2,MEM_DICT[memory_name][memory_section])
+        write_to_log (memory_name+ ' - section '+ memory_section + ', entered to ' + mode + ' mode')
+    
+    
+    elif (mode == "light_sleep" ):
+        if (memory_name in list1):
+            clear_bit (MEM_PWR_MD_DS1,MEM_DICT[memory_name][int(memory_section)])
+            clear_bit (MEM_PWR_MD_SD1,MEM_DICT[memory_name][int(memory_section)])
+            set_bit (MEM_PWR_MD_LS1,MEM_DICT[memory_name][int(memory_section)])
+        elif (memory_name in list2):
+            clear_bit (MEM_PWR_MD_DS2,MEM_DICT[memory_name][int(memory_section)])
+            clear_bit (MEM_PWR_MD_SD2,MEM_DICT[memory_name][int(memory_section)])
+            set_bit (MEM_PWR_MD_LS2,MEM_DICT[memory_name][int(memory_section)])
+        write_to_log (memory_name+ ' - section '+ memory_section + ', entered to ' + mode + ' mode')
+
     elif (mode == "deep_sleep" ):
         if (memory_name in list1):
-            set_bit (MEM_PWR_MD_DS1,memory_name[memory_section])
+            if ( (memory_name == 'DTCM') and (memory_section <= 3) ):
+                write_to_log('Secions 0-3 of DTCM cannot enter DEEP SLEEP mode')
+            elif ( (memory_name == 'CACHE') and (memory_section <= 1) ):
+                write_to_log('Secions 0-1 of CACHE cannot enter DEEP SLEEP mode')
+            else:
+                clear_bit (MEM_PWR_MD_SD1,MEM_DICT[memory_name][int(memory_section)])
+                set_bit (MEM_PWR_MD_DS1,MEM_DICT[memory_name][int(memory_section)])
+                write_to_log (memory_name+ ' - section '+ memory_section + ', entered to ' + mode + ' mode')
         elif (memory_name in list2):
-            set_bit (MEM_PWR_MD_DS2,memory_name[memory_section])
-        print ""
-        print "set bit for " , memory_name[memory_section] , ", on section = ", memory_section , ",  power mode = " , mode
-        print ""
+            if ((memory_name == 'HWVAD0') or (memory_name == 'HWVAD1') ):
+                write_to_log('HWVAD0 and HWVAD1 cannot enter DEEP SLEEP mode')
+            else:
+                clear_bit (MEM_PWR_MD_SD2,MEM_DICT[memory_name][int(memory_section)])
+                set_bit (MEM_PWR_MD_DS2,MEM_DICT[memory_name][int(memory_section)])
+                write_to_log (memory_name+ ' - section '+ memory_section + ', entered to ' + mode + ' mode')
+
     elif (mode == "shut_down" ):
         if (memory_name in list1):
-            set_bit (MEM_PWR_MD_SD1,memory_name[memory_section])
+            if ( (memory_name == 'DTCM') and (memory_section <= 3) ):
+                write_to_log('Secions 0-3 of DTCM cannot enter SHUT DOWN mode')
+            elif ( (memory_name == 'CACHE') and (memory_section <= 1) ):
+                write_to_log('Secions 0-1 of CACHE cannot enter SHUT DOWN mode')
+            else:
+                set_bit (MEM_PWR_MD_SD1,MEM_DICT[memory_name][int(memory_section)])
+                write_to_log (memory_name+ ' - section '+ memory_section + ', entered to ' + mode + ' mode')
         elif (memory_name in list2):
-            set_bit (MEM_PWR_MD_SD2,memory_name[memory_section])
-        print ""
-        print "set bit for " , memory_name , memory_name[memory_section] , ", on section = ", memory_section , ", power mode = " , mode
-        print ""          
+            if ((memory_name == 'HWVAD0') or (memory_name == 'HWVAD1') ):
+                write_to_log('HWVAD0 and HWVAD1 cannot enter SHUT DOWN mode')
+            else:
+                set_bit (MEM_PWR_MD_SD2,MEM_DICT[memory_name][int(memory_section)])
+                write_to_log (memory_name+ ' - section '+ memory_section + ', entered to ' + mode + ' mode')
+                
 def BaudRateCalculation(Integer,Frac ,APB_Clock):
     
     buad_rate = (1.0/16.0*(APB_Clock/(Integer+Frac/16)))
     return int (buad_rate)
 
+def exeBootFile():
+    ser.write(chr(0x5A))
+    ser.write(chr(0x0B))
+    time.sleep(0.5)
+    ser.write("19r")
+    time.sleep(0.5)
+    version = ser.read(5)
+    write_to_log("Chip Type = " + str(version)[:4])
+    # time.sleep(0.1)
+    #write_to_log("\n")
+    if (version[:3] == 'dbd'):
+        Boot_Complete=1
+        write_to_log("Boot Succeeded\n")
+    else:
+        write_to_log("Boot Failed\n")
+ 
+def load_file(file_name, unsent_bytes):
+    infile = open(file_name,"rb")
+    list_file = list(infile.read())
+    #list_file = [i for i in list_file]
+    wakeup()
+    j=0
     
+    #write_to_log("Start sending the file: "+ file_name)
+    while (j < len(list_file) - unsent_bytes):
+        ser.write(str(list_file[j]))
+        j = j + 1
+    #write_to_log("Done sending the file")
+        
+    time.sleep(1)
+    ser.flushInput()
+    
+    #write_to_log("File load successful")
+
+def load_boot_file(file_name):
+    load_file(file_name, 0)
+    exeBootFile()
 
 
 
+def FW_init(): #loading a specific acoustic model- analog mic, VT interupt on GPIO14
+    write_to_log("FW acoustic model configuration started")
+    FW_read_register ("0")
+    FW_write_register_short("29","0001") #close all interfaces except UART
+    FW_write_register_short("22","1220") #configure HW VAD, LDO at 0.9v 11v-->0.9v, OSC
+    FW_write_register_short("23","6022") #Configure MIPS to be: 12MHz
+    # time.sleep (1)
+    FW_write_register_short("10","6000") #AHB = APB = 12MHz  
+    #FW_write_register_short("10","6015") #AHB = 2MHz, APB = 1MHZ
+    # time.sleep (1)
+    FW_write_register_short("15","8e8e") #Configure interrupt GPIO 14
+    #FW_write_register_short("24","f043") #Configure digital microphone 1MHz 
+    FW_write_register_short("24","0028")
+    pre_load_trigger_model("C:\DBMD6-github\HBG_v332.bin") #Pre-Load acoustic model
+    load_model ("C:\DBMD6-github\HBG_v332.bin",'0') #Load acoustic model
+    FW_write_register_short("17","8") #Disable audio buffering
+    FW_write_register_short("01","0001") #Enter 
+    write_to_log("\n")
+    write_to_log("Configuration ended\n")
+
+def FW_init_strap10(): #loading a specific acoustic model- analog mic, VT interupt on GPIO14
+    write_to_log("FW acoustic model configuration started")
+    FW_read_register ("0")
+    FW_write_register_short("29","0001") #close all interfaces except UART
+    FW_write_register_short("22","1220") #configure HW VAD, LDO at 0.9v 11v-->0.9v, OSC
+    FW_write_register_short("23","6022") #Configure MIPS to be: 12MHz    #for bypass mode: '0022'
+    # time.sleep (1)
+    FW_write_register_short("10","6015") #6015 for: AHB = 2MHz, APB = 1MHZ     #6005 for: AHB = 2MHz, APB = 2MHZ 
+    # time.sleep (1)
+    FW_write_register_short("15","8e8e") #Configure interrupt GPIO 14
+    #FW_write_register_short("24","f043") #Configure digital microphone 1MHz 
+    FW_write_register_short("24","0028")
+    pre_load_trigger_model("C:\DBMD6-github\HBG_v332.bin") #Pre-Load acoustic model
+    load_model ("C:\DBMD6-github\HBG_v332.bin",'0') #Load acoustic model
+    FW_write_register_short("17","8") #Disable audio buffering
+    FW_write_register_short("01","0001") #Enter 
+    write_to_log("\n")
+    write_to_log("Configuration ended\n")
+
+def FW_write_register(reg_num, value):
+	global write_in_progress
+	ser.flushInput()
+	while (1):
+		if (write_in_progress == False):
+			write_in_progress = True
+			wakeup()
+			value = str(value)
+			if (value in LIST_OF_VALUES):
+				value = LIST_OF_VALUES[value]
+			value = value.zfill(4)
+			reg_num = str(reg_num)
+			reg_num = reg_num.zfill(3)
+			
+			ser.write(reg_num + "w" + value)
+			time.sleep (0.01)
+			FW_read_register(reg_num)
+
+			write_in_progress = False
+			break
+		else:
+			print "writing in use... please wait..."
+			time.sleep(0.01)
 
 
+#short- without reading the register after writing		
+def FW_write_register_short(reg_num, value):
+    global write_in_progress	
+    ser.flushInput()
+    while (1):
+        if (write_in_progress == False):
+            write_in_progress = True
+            wakeup()
+            value = str(value)
+            if (value in LIST_OF_VALUES):
+                value = LIST_OF_VALUES[value]
+            value = value.zfill(4)
+            reg_num = str(reg_num)
+            reg_num = reg_num.zfill(3)
+            ser.write(reg_num + "w" + value)
+            write_in_progress = False
+            time.sleep (0.5)
+            #FW_read_register(reg_num)
+            break
+        else:
+            print "writing in use... please wait..."
+            time.sleep(0.01)
 
+def FW_read_register(register_num):
+	global read_in_progress	
+	ser.flushInput()
+	while (1):
+		if (read_in_progress == False):
+			read_in_progress = True
+			wakeup()
+			register_num = str(register_num)
+			register_num = register_num.zfill(3)
+			ser.write(register_num + "r")
+			serRead = ser.read(5)[:4]
+			write_to_log("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
+			read_in_progress = False
+			break
+		else:
+			print "writing in use... please wait..."
+			time.sleep(0.01)
+		
+def FW_read_register_return_value(register_num):
+    global read_in_progress	
+    ser.flushInput()
+    while (1):
+        if (read_in_progress == False):
+            read_in_progress = True
+            wakeup()
+            register_num = str(register_num)
+            register_num = register_num.zfill(3)
+            ser.write(register_num + "r")
+            serRead = ser.read(5)[:4]
+            read_in_progress = False
+            write_to_log("reg: 0x" + register_num + " ; value: 0x" + str(serRead))
+            return serRead
+        else:
+            print "writing in use... please wait..."		
+            time.sleep(0.01)			
 
+def FW_read_register_loop(register_num):
+	i=0
+	print("reading register 0x" + str(register_num))
+	while (i<100):
+		read_register(register_num)
+		time.sleep(0.1)
+		i=i+1
+	print("done loop reading") 
 
+def FW_read_IO_port (reg_address):
+    global read_in_progress	
+    ser.flushInput()
+    while (1):
+        if (read_in_progress == False):
+            read_in_progress = True
+            reg_address = (str(reg_address)).zfill(8)		
+            address_msb = reg_address [:4]
+            address_lsb = reg_address [4:8]
+            wakeup()
+            ser.write("006w" + address_msb)
+            time.sleep (0.001)
+            ser.write("005w" + address_lsb)
+            time.sleep (0.001)
+            ser.write("007r")
+            value_lsb = ser.read(5)[:4]
+            ser.write("008r")
+            value_msb = ser.read(5)[:4]
+            write_to_log("reg: 0x" + reg_address + " ; value: 0x" + str(value_msb)+str(value_lsb))
+            read_in_progress = False
+            #break
+            return str(value_msb)+str(value_lsb)
+        else:
+            print("reading in use... please wait...")			
+            time.sleep(0.01)
 
+def FW_write_IO_port (reg_address, reg_value):
+	global write_in_progress	
+	ser.flushInput()
+	while (1):
+		if (write_in_progress == False):
+			write_in_progress = True
+			reg_address = (str(reg_address)).zfill(8)		
+			address_msb = reg_address [:4]
+			address_lsb = reg_address [4:8]
+			reg_value = (str(reg_value)).zfill(8)		
+			value_msb = reg_value [:4]
+			value_lsb = reg_value [4:8]
+			wakeup()
+			ser.write("006w" + address_msb)
+			time.sleep (0.001)
+			ser.write("005w" + address_lsb)
+			time.sleep (0.001)
+			ser.write("007w" + value_lsb)
+			time.sleep (0.001)
+			ser.write("008w" + value_msb)
+			
+			FW_read_IO_port (reg_address)
+			write_in_progress = False
+			break
+		else:
+			print("writing in use... please wait...")			
+			time.sleep(0.01)
 
+def pre_load_trigger_model(trigger_model):
+	if os.path.isfile(trigger_model):
+		FW_write_register(2, str(hex((os.path.getsize(trigger_model))/16+3).rstrip("L")[2:]))
+	else:
+		write_to_log("Acoustic model not found: " + trigger_model)
 
+def load_model(model_filename, mode):
+    if os.path.isfile(model_filename):
+        FW_write_register_short ("f", mode)
+        time.sleep(0.1)	
+        wakeup()	
+        load_file(model_filename,0)
+    
+        # # Checksum test
+        # calculated_checksum = checkSum()
+        # checksum_from_fw = read_checksum_from_fw()
+        # write_to_log("The checksum for Acoustic model is: " + str(checksum_from_fw))
+        # 
+        # if (calculated_checksum == checksum_from_fw):
+        # 	write_to_log ("Acoutic Model: Checksum test - Pass")
+        # else:
+        # 	write_to_log ("Acoutic Model: Checksum test - Fail")
+        # 	sys.exit()
+        
+        #ser.write(chr(0x5A))
+        #ser.write(chr(0x0B))
+        
+        
+        # for trigger model only!
+        mode = int(mode)
+        if (mode == 0):
+            time.sleep(0.05)
+            reg_value=FW_read_register_return_value("41")
+            if (reg_value == '0001'):
+                write_to_log("Acoustic model loaded: " + model_filename)
+                return
+            else:
+                write_to_log("Trigger acoustic model failed to load")
+                return
+    
+    else:
+        write_to_log("Acoustic model not found: " + model_filename)
 
+        
+def read_checksum_from_fw_file(file_name):
+	infile = open(file_name, "rb")
+	list_file = list(infile.read())
+	j=len(list_file) - 4
+	checksum_data = []
+	for i in xrange(0, 4):
+		checksum_data.append(str(hex(ord(list_file[j+i]))))
+	return checksum_data
 
+def wakeup():
+    if ( (chip_type=="D4") or (chip_type=="D6") ):
+        ser.write(chr(0x00))
+        time.sleep(0.05)
+        ser.write(chr(0x00))
+        time.sleep(0.05)
+        ser.write(chr(0x00))
+        ser.flushInput()
+        time.sleep(0.3)
+    else:
+        GPIO.output(WAKEUP_GPIO,True)
+        time.sleep(0.1)
+        
+
+def playAudioFile(audio_file_name):
+    winsound.PlaySound(audio_file_name, winsound.SND_FILENAME)
+    write_to_log("playing audio file: "+audio_file_name)
+    
+    
