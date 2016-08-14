@@ -310,20 +310,100 @@ def set_bit(addr,bits_set_hex):
     print ""
     write_apb_reg(addr,hex_fin_reg)
 
+
+#########################################################################################################################################################
+# create_excel_log = create excel log file
+#################################    
+    
+def create_excel_log(Log_Name_Excel,Sheet_Name,name_columnA,name_columnB,name_columnC,name_columnD,name_columnE,name_columnF,name_columnG,name_columnH,name_columnI,name_columnJ):
+    Make_Dir(Dir_Name) # call to the make dir function
+    global Current_File_Name_xls
+    global wb
+    global ws
+    global index_1
+    
+    temp = Dir_Name + Log_Name_Excel
+    Current_File_Name_xls = temp
+    print temp
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = Sheet_Name
+    print(wb.get_sheet_names())
+    print os.getcwd()    
+    #ws = wb.get_sheet_by_name("Results")
+    #wb = openpyxl.load_workbook(Test_Name)
+    #d = ws.cell(row = 4, column = 2)
+    #c = ws.cell('A4')
+    #c = ws['A4']
+    #cell_range = ws['A1':'C2']
+    #c.value = 'hello, world'
+    #print(c.value)
+    
+    index_1=ws.max_row
+    print index_1
+   # index_2=ws.max_column
+    if index_1==0:
+        ws.cell(row=index_1+1, column=1).value=name_columnA
+        ws.cell(row=index_1+1, column=2).value=name_columnB
+        ws.cell(row=index_1+1, column=3).value=name_columnC
+        ws.cell(row=index_1+1, column=4).value=name_columnD
+        ws.cell(row=index_1+1, column=5).value=name_columnE
+        ws.cell(row=index_1+1, column=6).value=name_columnF
+        ws.cell(row=index_1+1, column=7).value=name_columnG
+        ws.cell(row=index_1+1, column=8).value=name_columnH
+        ws.cell(row=index_1+1, column=9).value=name_columnI
+        ws.cell(row=index_1+1, column=10).value=name_columnJ
+        #ws['A1']=name_columnA
+        #ws['B1']=name_columnB
+        #ws['C1']=name_columnC
+        #ws['D1']=name_columnD
+        #ws['E1']=name_columnE
+        #ws['F1']=name_columnF
+        #ws['G1']=name_columnG
+        #ws['H1']=name_columnH
+        #ws['I1']=name_columnI
+        #ws['J1']=name_columnJ
+    else:
+        print "title row already exist"
+    wb.save(Current_File_Name_xls)
+    #Log_Name_Excel
+   # Excel_Name=Log_Name_Excel
+   # return Excel_Name
+    #get_column_letter(sheet.max_column)
+    #column_index_from_string('A')
+    
+    
+#########################################################################################################################################################
+# call_excel_file = call an existing excel file and give you the required work sheet
+#################################   
+def call_excel_file(Current_File_Name_xls,Sheet_Name):
+    wb = openpyxl.load_workbook(Current_File_Name_xls)
+    ws = wb.get_sheet_by_name(Sheet_Name)
+    #ws=wb.active
+   
+    
 # MEM_BIST = function run the BIST test 
 #################################
-def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
-    
+def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Chip_No,Chiptype,Temperature,STRAP,Voltage,Frequency,Sheet_Name):
+    chiptype=Chiptype
     voltage=Voltage
-    #voltage="1V"
-    #voltage="1.1V"
-    #voltage="1.21V"
-    
     temperature=Temperature
-    #temperature=-40C
-    #temperature=25C
-    #temperature=80C
     
+    call_excel_file(Current_File_Name_xls,Sheet_Name)
+    index_1=ws.max_row
+    print index_1
+
+    ws.cell(row=index_1+1, column=3).value=test_name
+    ws.cell(row=index_1+1, column=1).value=Chip_No
+    ws.cell(row=index_1+1, column=2).value=Chiptype
+    ws.cell(row=index_1+1, column=4).value=Temperature
+    ws.cell(row=index_1+1, column=5).value=STRAP
+    ws.cell(row=index_1+1, column=6).value=Voltage
+    ws.cell(row=index_1+1, column=7).value=Frequency
+
+    wb.save(Current_File_Name_xls)
+
+
     read_apb_reg("0300004c")
     write_apb_reg("0300004c","88025614")
     read_apb_reg("0300004c")
@@ -341,11 +421,29 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
     #input voltage (VCC) is 1.1V 
     if LDO=="0.9":
         set_bit("0300003c","0008")  #LC=15, LDO level in VDD =15
-        set_bit("0300003c","0070")  #LDO enable 
+        set_bit("0300003c","0070")  #LDO enable
+        Add_To_File("\n\n")
+        Add_To_File("LDO 0.9V")
+        Add_To_File("\n\n")
+    elif LDO=="0.855":
+        #set_bit("0300003c","0006")  #LC=15, LDO level in VDD =15
+        #set_bit("0300003c","0070")  #LDO enable
+        write_apb_reg("0300003c","0077")
+        Add_To_File("\n\n")
+        Add_To_File("LDO 0.855V")
+        Add_To_File("\n\n")
     elif LDO=="bypass":
         set_bit("03000044","1")     #enable weak pull
         clear_bit("0300003c","0010")#LDO disable 
         clear_bit("03000044","1")   #disable weak pull
+        Add_To_File("\n\n")
+        Add_To_File("LDO in Bypass")
+        Add_To_File("\n\n")
+    else:
+        print "LDO not chosen"
+        Add_To_File("\n\n")
+        Add_To_File("LDO not chosen")
+        Add_To_File("\n\n") 
          
     #added configuration for this two tests
     print "#######",test_name,"#######"
@@ -405,7 +503,9 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
             
     #if the end-result 0 - pass, else - fail
     if end_res > 0 :
-        Add_To_File("Temperature:  ")
+        Add_To_File("Chiptype:  ")
+        Add_To_File(Chiptype)
+        Add_To_File("  , Temperature:  ")
         Add_To_File(temperature)
         Add_To_File(" , Voltage:  ")    
         Add_To_File(voltage)
@@ -414,10 +514,13 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
         Add_To_File(': ')
         Add_To_File("fail")
         Add_To_File("\n\n")
+        pass_fail="fail"
         print "fail"
     else:
 
-        Add_To_File("Temperature:  ")
+        Add_To_File("Chiptype:  ")
+        Add_To_File(Chiptype)
+        Add_To_File("  , Temperature:  ")
         Add_To_File(temperature)
         Add_To_File(" , Voltage:  ")    
         Add_To_File(voltage)
@@ -426,8 +529,13 @@ def MEM_BIST(test_name,write_val,status_reg,result_val,LDO,Voltage,Temperature):
         Add_To_File(': ')
         Add_To_File("pass")
         Add_To_File("\n\n")
+        pass_fail="pass"
         print "pass"
-
+    
+    ws.cell(row=index_1+1, column=9).value=pass_fail
+    ws.cell(row=index_1+1, column=10).value=apb_reg
+    wb.save(Current_File_Name_xls)
+    return pass_fail
 
 #########################################################################################################################################################
 # Clock out for D4 - D6

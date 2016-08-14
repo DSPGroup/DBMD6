@@ -46,6 +46,7 @@ Character2 = "_"
 Test_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 Test_Time = datetime.datetime.strftime(datetime.datetime.now(), '%H-%M-%S')
 Log_Name = Character1 + Test_Name + Character2 + Test_Date + Character2 + Test_Time + '.txt'
+Log_Name_Excel = Character1 + Test_Name + Character2 + Test_Date + Character2 + Test_Time + '.xlsx'
 
 #########################################
 #####     Memory address offset
