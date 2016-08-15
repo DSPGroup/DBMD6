@@ -22,7 +22,7 @@ SerialConfig_1 (COM ,BAUD_RATE)
 # connect and sync to the D6
 
 Open_log(Log_Name)
-Sync ()
+Sync (10)
 print os.getcwd()
 #checkSum()
 #reset
