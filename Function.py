@@ -687,7 +687,7 @@ def All_Memory_Power_Mode (power_mode):  #power_mode can get: atcive ; light_sle
         #clear bits of DEEP SLEEP:
         clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS2,"ffe")
-<<<<<<< HEAD
+
         print"clear the bits of shut_down"
         clear_bit (MEM_PWR_MD_DS1,"3ffffff")
         clear_bit (MEM_PWR_MD_DS1,"ffe")
@@ -700,7 +700,7 @@ def All_Memory_Power_Mode (power_mode):  #power_mode can get: atcive ; light_sle
         else :
             clear_bit (MEM_PWR_MD_LS1,"3FFFFFF")
             clear_bit (MEM_PWR_MD_LS2,"1fff")
-=======
+
         #clear bits of SHUT DOWN:
         clear_bit (MEM_PWR_MD_SD1,"3ffffff")
         clear_bit (MEM_PWR_MD_SD1,"ffe")
@@ -709,7 +709,6 @@ def All_Memory_Power_Mode (power_mode):  #power_mode can get: atcive ; light_sle
         set_bit (MEM_PWR_MD_LS1,"3FFFC3C")
         write_to_log("All memory blocks entered to LIGHT SLEEP mode")
 
->>>>>>> 7a189439d80eb87b7625ac5139057ee8228c8ffd
         
     elif (power_mode == "deep_sleep" ):
         #clear the bits of SHUT DOWN:
@@ -836,27 +835,22 @@ def exeBootFile():
  
 def load_file(file_name, unsent_bytes):
     infile = open(file_name,"rb")
-    list_file = list(infile.read())
-    #list_file = [i for i in list_file]
+    bytes_to_send = infile.read()
     wakeup()
-    j=0
-    
-    #write_to_log("Start sending the file: "+ file_name)
-    while (j < len(list_file) - unsent_bytes):
-        ser.write(str(list_file[j]))
-        j = j + 1
-    #write_to_log("Done sending the file")
-        
+    if (unsent_bytes == 0):
+        ser.write(str(bytes_to_send)) 
+    else:
+        ser.write((str(bytes_to_send))[:-unsent_bytes]) 
     time.sleep(1)
     ser.flushInput()
     
     #write_to_log("File load successful")
 
 def load_boot_file(file_name):
+    write_to_log('Baud Rate: '+str(BAUD_RATE))
     load_file(file_name, 0)
     exeBootFile()
-
-
+    
 
 def FW_init(): #loading a specific acoustic model- analog mic, VT interupt on GPIO14
     write_to_log("FW acoustic model configuration started")
@@ -871,8 +865,8 @@ def FW_init(): #loading a specific acoustic model- analog mic, VT interupt on GP
     FW_write_register_short("15","8e8e") #Configure interrupt GPIO 14
     #FW_write_register_short("24","f043") #Configure digital microphone 1MHz 
     FW_write_register_short("24","0028")
-    pre_load_trigger_model("C:\DBMD6-github\HBG_v332.bin") #Pre-Load acoustic model
-    load_model ("C:\DBMD6-github\HBG_v332.bin",'0') #Load acoustic model
+    pre_load_trigger_model("C:\DBMD6-github\Tests\Bar\HBG_v332.bin") #Pre-Load acoustic model
+    load_model ("C:\DBMD6-github\Tests\Bar\HBG_v332.bin",'0') #Load acoustic model
     FW_write_register_short("17","8") #Disable audio buffering
     FW_write_register_short("01","0001") #Enter 
     write_to_log("\n")
@@ -883,15 +877,15 @@ def FW_init_strap10(): #loading a specific acoustic model- analog mic, VT interu
     FW_read_register ("0")
     FW_write_register_short("29","0001") #close all interfaces except UART
     FW_write_register_short("22","1220") #configure HW VAD, LDO at 0.9v 11v-->0.9v, OSC
-    FW_write_register_short("23","6022") #Configure MIPS to be: 12MHz    #for bypass mode: '0022'
+    FW_write_register_short("23","0022") #Configure MIPS to be: 12MHz    #for bypass mode: '0022'
     # time.sleep (1)
     FW_write_register_short("10","6015") #6015 for: AHB = 2MHz, APB = 1MHZ     #6005 for: AHB = 2MHz, APB = 2MHZ 
     # time.sleep (1)
     FW_write_register_short("15","8e8e") #Configure interrupt GPIO 14
     #FW_write_register_short("24","f043") #Configure digital microphone 1MHz 
     FW_write_register_short("24","0028")
-    pre_load_trigger_model("C:\DBMD6-github\HBG_v332.bin") #Pre-Load acoustic model
-    load_model ("C:\DBMD6-github\HBG_v332.bin",'0') #Load acoustic model
+    pre_load_trigger_model("C:\DBMD6-github\Tests\Bar\HBG_v332.bin") #Pre-Load acoustic model
+    load_model ("C:\DBMD6-github\Tests\Bar\HBG_v332.bin",'0') #Load acoustic model
     FW_write_register_short("17","8") #Disable audio buffering
     FW_write_register_short("01","0001") #Enter 
     write_to_log("\n")
