@@ -27,7 +27,7 @@ chip_type = "D6"
 #####     Uart Basic Configuration
 #########################################
 COM = 'COM4'
-BAUD_RATE = 57600 #115200
+BAUD_RATE = 912600  #57600 #115200
 BYTE_SIZE = 8
 PARIT = 'N'
 STOP_BITS = 1
@@ -53,15 +53,24 @@ Frac =11.0
 #########################################
 #####     Bar Create Folder
 #########################################
-Path_Folder = r'C:\python_scripts\\'
-Folder_Name = "Test Result"
+#D6 Electrical Test:
+Path_Folder = r'T:\DBMD6_electrical_functionality_tests\Test Result'
+Folder_Name = "Test Logs"
 Folder_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 Dir_Name = os.path.join(Path_Folder , Folder_Name , Folder_Date)
+Test_Name = "Electrical_Test"
+
+#D6 Stress Test:
+#Path_Folder = r'C:\DBMD6-github\Test Result\Bar'
+#Folder_Name = "DBMD6_StressTest"
+#Folder_Date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
+#Dir_Name = os.path.join(Path_Folder , Folder_Name , Folder_Date)
+#Test_Name = "HBG_Test"
 #########################################
 #####     Log
 #########################################
 
-Test_Name = "HBG_Test"
+
 
 Character1 = "\\"
 Character2 = "_" 
