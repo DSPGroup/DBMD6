@@ -19,14 +19,17 @@ import shlex
 import datetime
 import shutil
 import binascii
-import winsound #for running audio files
+<<<<<<< HEAD
 import openpyxl
+=======
+import winsound #for running audio files
+>>>>>>> e8124923392a2963c7e13d02f67b02dc9d757b02
 
 ##########################################################
 #Hen File Configuration
 ##########################################################
-execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Init_Configuration.py")
-execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Function.py")
+#execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Init_Configuration.py")
+#execfile("C:\Users\henl\Documents\D6\PROJ\DBMD6\Function.py")
 
 ##########################################################
 #Eran File Configuration

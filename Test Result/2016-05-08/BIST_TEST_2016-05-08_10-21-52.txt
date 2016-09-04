@@ -1,7 +1,0 @@
-\BIST_TEST_2016-05-08_10-21-52.txt
-NO Sync
-
-need Restart to the D6Write Address 04000010 with value 00000400
-
-Write Address 04000008 with value 00000400
-
