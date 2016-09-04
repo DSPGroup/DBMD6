@@ -9,7 +9,7 @@ def main():
     #Open_log(Log_Name)
     
     #load the boot file
-    load_boot_file ('C:\DBMD6-github\VT_D6_ver_293_Sen333.bin')
+    load_boot_file ('C:\DBMD6-github\Tests\Bar\VT_D6_ver_293_Sen333.bin')
     
     
     #FW_write_register_short("24","f048") #Configure digital microphone 1MHz  //f043

@@ -16,15 +16,15 @@ def main():
     #read gpio5's interupt, to make sure its clear before the voice triggering
     interupt1=FW_read_IO_port('40002A8')
     interupt1=int(interupt1,16)&2
-    
+
     #play 'Hello Blue Genie'
-    playAudioFile('C:\DBMD6-github\HBG1.wav')
+    playAudioFile('C:\DBMD6-github\Tests\Bar\HBG1.wav')
     time.sleep(3)
     
     #check gpio5's interupt register
     interupt2=FW_read_IO_port('40002A8')
     interupt2=int(interupt2,16)&2
     if ((interupt2 == 2) and (interupt1 == 0)):
-        print 'Pass'
-    
+        write_to_log('Pass')
+    FW_write_IO_port ('40002AC', '2')
 main()

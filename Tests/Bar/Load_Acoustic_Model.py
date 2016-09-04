@@ -10,6 +10,6 @@ def main():
     #Open_log(Log_Name)
     
     #config and load acoustic model
-    FW_init()
-    #FW_init_strap10()
+    #FW_init()
+    FW_init_strap10()
 main()

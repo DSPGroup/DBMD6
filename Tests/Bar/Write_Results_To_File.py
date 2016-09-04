@@ -7,9 +7,9 @@ def main():
     Open_log(Character1 + sys.argv[3])
     
     write_to_log('Max voltage measured: '+ str(sys.argv[2]))
-    write_to_log("\n")
-    if (float(sys.argv[2]) > 1.5):
-        write_to_log('VT status: PASS\n') 
-    else:
-        write_to_log('VT status: FAIL\n')
+    #write_to_log("\n")
+    #if (float(sys.argv[2]) > 1.5):
+    #    write_to_log('VT status: PASS\n') 
+    #else:
+    #    write_to_log('VT status: FAIL\n')
 main()
